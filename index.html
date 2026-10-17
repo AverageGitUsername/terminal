@@ -1478,51 +1478,181 @@
     .sublim-reader { padding: 22px 20px; }
   }
 
-  /* ── TAB 7: СВЯЗЬ ── */
-  .comm-wrap { width: 100%; max-width: 100%; }
+ /* ── TAB 7: СВЯЗЬ (ASTROPATHIC VOX-TERMINAL) ── */
+  .comm-workspace {
+    display: grid;
+    grid-template-columns: clamp(320px, 28vw, 410px) 1fr;
+    gap: 24px; align-items: stretch;
+  }
+
+  /* Левая колонка: Пеленгатор Хора и Узлы Реле */
+  .comm-beacon-panel {
+    background: linear-gradient(180deg, rgba(14,3,3,0.96) 0%, rgba(6,1,1,0.98) 100%);
+    border: 1px solid var(--border-bright); border-top: 2px solid var(--gold);
+    padding: 18px 20px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+  }
+  .comm-beacon-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.62rem;
+    color: var(--gold); letter-spacing: 1.8px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .comm-radar-wrap {
+    position: relative; width: 100%; aspect-ratio: 1 / 0.88;
+    background: radial-gradient(circle at center, rgba(32, 4, 4, 0.8) 0%, rgba(4, 0, 0, 0.96) 100%);
+    border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .comm-radar-svg { width: 100%; height: 100%; display: block; }
+  .warp-ring-cw  { transform-origin: 180px 155px; animation: radar-spin 28s linear infinite; }
+  .warp-ring-ccw { transform-origin: 180px 155px; animation: radar-spin 19s linear infinite reverse; }
+  .warp-wave-path {
+    animation: warp-wave-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes warp-wave-pulse {
+    0%, 100% { opacity: 0.85; transform: scaleY(1); }
+    50%      { opacity: 0.45; transform: scaleY(0.65); }
+  }
+
+  .comm-telemetry-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+  }
+  .ct-cell {
+    background: rgba(0,0,0,0.68); border: 1px solid var(--border);
+    padding: 6px 9px; display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.58rem;
+  }
+  .ct-k { color: var(--text-dim); letter-spacing: 0.8px; }
+  .ct-v { color: var(--gold); letter-spacing: 0.8px; }
+  .ct-v.ok { color: var(--green-ok); }
+
+  .comm-relay-strip { display: flex; flex-direction: column; gap: 6px; }
+  .crs-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.56rem;
+    color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .crs-btn {
+    width: 100%; padding: 8px 11px; text-align: left;
+    background: rgba(0,0,0,0.7); border: 1px solid var(--border-bright);
+    border-left: 3px solid var(--crimson-dark);
+    color: var(--text-dim); font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 1.2px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between;
+  }
+  .crs-btn:hover { color: var(--text); border-color: var(--crimson); }
+  .crs-btn.active {
+    color: var(--gold-bright); border-color: var(--gold);
+    border-left-color: var(--gold-bright); background: rgba(201,168,76,0.12);
+  }
+
+  /* Правая колонка: Пульт Трансмиссии + Буфер Перехвата */
+  .comm-console-col {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 18px;
+  }
   .comm-panel {
     background: var(--panel); border: 1px solid var(--border-bright);
-    padding: 28px 30px; position: relative;
+    padding: 22px 26px; position: relative; flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
   }
   .comm-panel::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(to right, var(--crimson-dark), var(--crimson), transparent);
+    background: linear-gradient(to right, var(--crimson-dark), var(--crimson), var(--gold), transparent);
   }
-  .comm-info {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.74rem;
-    color: var(--text-muted); line-height: 1.65; padding: 12px 14px;
-    border: 1px solid var(--border); background: rgba(0,0,0,0.45);
-    letter-spacing: 0.5px; margin-bottom: 24px;
+  .cp-top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px; padding-bottom: 10px; margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 1.5px;
   }
-  .comm-info .mark { color: var(--gold); }
-  .form-group { margin-bottom: 18px; }
+  .cp-byte-counter { color: var(--gold); }
+
+  /* Протоколы Шифрования / Уровни Срочности Инквизиции */
+  .clearance-group { margin-bottom: 16px; }
+  .clearance-lbl {
+    display: block; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem; color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 7px;
+  }
+  .clearance-tabs {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  }
+  .clr-btn {
+    padding: 8px 6px; background: rgba(0,0,0,0.75);
+    border: 1px solid var(--border-bright); color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    transition: all 0.2s; text-align: center; display: flex; flex-direction: column; gap: 2px;
+  }
+  .clr-btn span.clr-sub { font-size: 0.5rem; opacity: 0.7; }
+  .clr-btn:hover { color: var(--text); border-color: var(--crimson); }
+
+  .clr-btn.active[data-clr="OMICRON"]   { border-color: var(--green-ok); color: #5cd65c; background: rgba(20,60,20,0.25); }
+  .clr-btn.active[data-clr="CYAN"]      { border-color: #3898b8; color: #6ad2f5; background: rgba(15,50,70,0.28); }
+  .clr-btn.active[data-clr="MAGENTA"]   { border-color: #b83280; color: #f06cb8; background: rgba(65,12,45,0.3); }
+  .clr-btn.active[data-clr="VERMILION"] { border-color: var(--crimson-bright); color: var(--crimson-bright); background: rgba(192,57,43,0.22); box-shadow: 0 0 12px rgba(229,57,53,0.25); }
+  .clr-btn.active[data-clr="BLACK"]     { border-color: var(--gold-bright); color: #fff; background: linear-gradient(180deg, rgba(90,0,0,0.6), rgba(10,0,0,0.95)); box-shadow: 0 0 15px rgba(255,30,30,0.4); animation: arch-pulse 1.6s infinite; }
+
+  .form-row-split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+  }
+  .form-group { margin-bottom: 14px; }
+  .form-row-split .form-group { margin-bottom: 0; }
   .form-group label {
     display: block; font-family: 'Share Tech Mono', monospace;
-    font-size: 0.66rem; color: var(--gold); letter-spacing: 2.5px;
-    text-transform: uppercase; margin-bottom: 7px;
+    font-size: 0.62rem; color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 6px;
   }
   .comm-input {
     width: 100%; background: rgba(0,0,0,0.75); border: 1px solid var(--border-bright);
     border-bottom: 1px solid var(--crimson-dark); color: var(--text);
-    padding: 11px 14px; font-family: 'Share Tech Mono', monospace;
-    font-size: 0.9rem; outline: none; transition: border-color 0.2s; resize: vertical;
+    padding: 10px 13px; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.86rem; outline: none; transition: border-color 0.2s; resize: none;
   }
   .comm-input:focus { border-bottom-color: var(--crimson-bright); box-shadow: 0 2px 0 var(--crimson-dark); }
   .comm-input::placeholder { color: var(--text-dim); opacity: 0.55; }
   .comm-btn {
-    width: 100%; padding: 14px 25px; background: rgba(192,57,43,0.1);
+    width: 100%; padding: 13px 22px; background: rgba(192,57,43,0.12);
     border: 1px solid var(--crimson); color: var(--crimson-bright);
-    font-family: 'Share Tech Mono', monospace; font-size: 0.85rem;
-    letter-spacing: 3.5px; text-transform: uppercase; cursor: pointer;
-    transition: all 0.28s;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.82rem;
+    letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+    transition: all 0.25s;
   }
   .comm-btn:hover {
-    background: rgba(192,57,43,0.24); border-color: var(--crimson-bright);
-    box-shadow: 0 0 18px rgba(192,57,43,0.25); color: var(--text);
+    background: rgba(192,57,43,0.26); border-color: var(--crimson-bright);
+    box-shadow: 0 0 18px rgba(192,57,43,0.3); color: var(--text);
   }
   .comm-btn:disabled { opacity: 0.38; cursor: not-allowed; }
-  #form-status { margin-top: 14px; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; letter-spacing: 1px; min-height: 18px; }
+  #form-status { margin-top: 10px; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 1px; min-height: 16px; }
 
+  /* Нижний блок: Журнал Астропатического Буфера */
+  .comm-log-box {
+    background: rgba(6, 1, 1, 0.94); border: 1px solid var(--border-bright);
+    border-left: 3px solid var(--gold); padding: 14px 18px;
+  }
+  .clb-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+    color: var(--gold); letter-spacing: 1.8px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border); margin-bottom: 8px;
+  }
+  .clb-feed {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 115px; overflow-y: auto;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.66rem;
+  }
+  .clb-line {
+    display: flex; gap: 10px; align-items: baseline; line-height: 1.4;
+    color: var(--text-muted); border-bottom: 1px dashed rgba(70,15,15,0.4); padding-bottom: 4px;
+  }
+  .clb-line:last-child { border-bottom: none; padding-bottom: 0; }
+  .clb-tag { color: var(--gold); white-space: nowrap; font-size: 0.6rem; }
+  .clb-tag.crit { color: var(--crimson-bright); }
+
+  @media (max-width: 1080px) {
+    .comm-workspace, .form-row-split { grid-template-columns: 1fr; }
+    .clearance-tabs { grid-template-columns: repeat(3, 1fr); }
+  }
   /* ── GENERIC TAB PRELOADER ── */
   .tab-preloader {
     position: absolute; inset: 0; z-index: 15; background: var(--bg);
@@ -4542,26 +4672,371 @@
     <div id="comm-content" class="preload-content">
       <div class="pg-head">
         <div class="pg-eyebrow">ЗАШИФРОВАННЫЙ КАНАЛ // ВАРП-МАЯК ОРДО КСЕНОС</div>
-        <div class="pg-title">Астропатическая Трансмиссия</div>
+        <div class="pg-title">
+          Астропатическая Трансмиссия
+          <span class="status-badge" id="comm-top-badge">◈ ПРОТОКОЛ ШИФРОВАНИЯ: VERMILION</span>
+        </div>
       </div>
-      <div class="comm-wrap">
-        <div class="comm-panel">
-          <div class="comm-info">
-            <span class="mark">&#9888;</span> Данный канал защищён шифрами Инквизиции уровня Омикрон. Все трансмиссии проходят через Астропатический Хор Ордо Ксенос. Задержка доставки: не определена. Несанкционированный доступ влечёт расследование Ордо Ксенос.
+
+      <div class="comm-workspace">
+        <!-- 1. ЛЕВАЯ КОЛОНКА: ПЕЛЕНГАТОР ХОРА И УЗЛЫ РЕТРАНСЛЯЦИИ -->
+        <div class="comm-beacon-panel">
+          <div class="comm-beacon-head">
+            <span id="cb-head-title">ПЕЛЕНГАТОР ИММАТЕРИУМА</span>
+            <span id="cb-freq-val" style="color:var(--crimson-bright)">ЧАСТОТА: 884.IX-OMICRON</span>
           </div>
-          <div class="form-group">
-            <label>Позывной Отправителя</label>
-            <input type="text" id="senderName" class="comm-input" placeholder="Введите идентификатор..." autocomplete="off">
+
+          <div class="comm-radar-wrap">
+            <svg class="comm-radar-svg" viewBox="0 0 360 310" xmlns="http://www.w3.org/2000/svg">
+              <!-- Сетка пеленгатора -->
+              <line x1="180" y1="10" x2="180" y2="300" stroke="rgba(192,57,43,0.22)" stroke-width="0.8"/>
+              <line x1="15" y1="155" x2="345" y2="155" stroke="rgba(192,57,43,0.22)" stroke-width="0.8"/>
+              <circle cx="180" cy="155" r="122" fill="none" stroke="rgba(201,168,76,0.18)" stroke-width="1"/>
+              <circle cx="180" cy="155" r="78" fill="none" stroke="rgba(192,57,43,0.25)" stroke-width="0.8" stroke-dasharray="4 6"/>
+
+              <!-- Гексаграмматическое кольцо защиты от Варпа -->
+              <g class="warp-ring-cw">
+                <circle cx="180" cy="155" r="102" fill="none" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="16 8 4 8" opacity="0.6"/>
+                <polygon points="180,53 268,206 92,206" fill="none" stroke="rgba(201,168,76,0.28)" stroke-width="1"/>
+                <polygon points="180,257 268,104 92,104" fill="none" stroke="rgba(201,168,76,0.28)" stroke-width="1"/>
+              </g>
+              <g class="warp-ring-ccw">
+                <circle cx="180" cy="155" r="56" fill="none" stroke="#e5c365" stroke-width="1.1" stroke-dasharray="10 6" opacity="0.55"/>
+              </g>
+
+              <!-- Астропатическая волна несущей частоты -->
+              <g class="warp-wave-path" style="transform-origin: 180px 155px;">
+                <path id="comm-svg-wave" d="M 25 155 Q 65 95, 105 155 T 180 155 T 255 155 T 335 155"
+                      fill="none" stroke="#e53935" stroke-width="2"/>
+              </g>
+
+              <!-- Центральное ядро маяка -->
+              <circle cx="180" cy="155" r="14" fill="rgba(229,57,53,0.25)" stroke="#ff3b30" stroke-width="1.5"/>
+              <circle cx="180" cy="155" r="4" fill="#e5c365"/>
+
+              <!-- Универсальная цепочка ретрансляции (без привязки к одной планете) -->
+              <g font-family="Share Tech Mono, monospace" font-size="7.5" fill="#e5c365">
+                <text x="14" y="22" id="comm-svg-node">NODE: STRIKE CRUISER RELAY</text>
+                <text x="14" y="34" fill="#f0dfc5" id="comm-svg-clr">CIPHER: VERMILION GRADE</text>
+                <text x="14" y="294" fill="#389e38">HEXAGRAMMATIC WARDS: LOCKED</text>
+                <text x="248" y="22" fill="#ff3b30">WARP ECHO: 0.04%</text>
+              </g>
+            </svg>
           </div>
-          <div class="form-group">
-            <label>Пакет Данных</label>
-            <textarea id="messageText" class="comm-input" rows="5" placeholder="Введите текст трансмиссии..."></textarea>
+
+          <div class="comm-telemetry-grid">
+            <div class="ct-cell"><span class="ct-k" id="ct-k1">ЧИСТОТА ЭФИРА:</span><span class="ct-v ok" id="ct-v1">98.4%</span></div>
+            <div class="ct-cell"><span class="ct-k" id="ct-k2">ГЕКСАГРАММА:</span><span class="ct-v ok" id="ct-v2">АКТИВНА</span></div>
+            <div class="ct-cell"><span class="ct-k" id="ct-k3">ЗАДЕРЖКА ХОРА:</span><span class="ct-v" id="ct-v3">0.04 МКС</span></div>
+            <div class="ct-cell"><span class="ct-k" id="ct-k4">ОМНИ-ШИФР:</span><span class="ct-v" id="ct-v4">VERMILION</span></div>
           </div>
-          <button class="comm-btn" onclick="sendMessage()">&#9672;  ПЕРЕДАТЬ В ВАРП  &#9672;</button>
-          <div id="form-status"></div>
+
+          <div class="comm-relay-strip">
+            <span class="crs-label" id="crs-label">МАРШРУТ АСТРОПАТИЧЕСКОГО РЕЛЕ:</span>
+            <button type="button" class="crs-btn active" onclick="selectCommRelay(0, this)">
+              <span class="crs-name">01. ПРЯМОЙ ВОКС // СУБЪЕКТ-884</span>
+              <span>[ ФОБОС-ЛИНК ]</span>
+            </button>
+            <button type="button" class="crs-btn" onclick="selectCommRelay(1, this)">
+              <span class="crs-name">02. УДАРНЫЙ КРЕЙСЕР КАРАУЛА</span>
+              <span>[ ОРБИТА ТВД ]</span>
+            </button>
+            <button type="button" class="crs-btn" onclick="selectCommRelay(2, this)">
+              <span class="crs-name">03. КАРАУЛЬНАЯ КРЕПОСТЬ // ОРДО КСЕНОС</span>
+              <span>[ ХОР СЕКТОРА ]</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. ПРАВАЯ КОЛОНКА: ПУЛЬТ ТРАНСМИССИИ И ЖУРНАЛ ПЕРЕХВАТА -->
+        <div class="comm-console-col">
+          <div class="comm-panel">
+            <div>
+              <div class="cp-top-bar">
+                <span id="cp-console-title">ПУЛЬТ ФОРМИРОВАНИЯ ПАКЕТА // КАНАЛ ОТКРЫТ</span>
+                <span class="cp-byte-counter" id="cp-byte-counter">ОБЪЁМ ПАКЕТА: 0 БАЙТ // ХЭШ: 0x884A</span>
+              </div>
+
+              <!-- ВЫБОР ПРОТОКОЛА ШИФРОВАНИЯ / УРОВНЯ СРОЧНОСТИ ИНКВИЗИЦИИ -->
+              <div class="clearance-group">
+                <span class="clearance-lbl" id="clr-group-lbl">Кодировка Шифра / Уровень Срочности (Передаётся в Реестр):</span>
+                <div class="clearance-tabs">
+                  <button type="button" class="clr-btn" data-clr="OMICRON" onclick="selectCommClearance('OMICRON', this)">
+                    <span>OMICRON</span>
+                    <span class="clr-sub" data-ru="Штатный" data-en="Routine">Штатный</span>
+                  </button>
+                  <button type="button" class="clr-btn" data-clr="CYAN" onclick="selectCommClearance('CYAN', this)">
+                    <span>CYAN</span>
+                    <span class="clr-sub" data-ru="Оперативный" data-en="Tactical">Оперативный</span>
+                  </button>
+                  <button type="button" class="clr-btn" data-clr="MAGENTA" onclick="selectCommClearance('MAGENTA', this)">
+                    <span>MAGENTA</span>
+                    <span class="clr-sub" data-ru="Секретный" data-en="Classified">Секретный</span>
+                  </button>
+                  <button type="button" class="clr-btn active" data-clr="VERMILION" onclick="selectCommClearance('VERMILION', this)">
+                    <span>VERMILION</span>
+                    <span class="clr-sub" data-ru="Приоритет" data-en="High Priority">Приоритет</span>
+                  </button>
+                  <button type="button" class="clr-btn" data-clr="BLACK" onclick="selectCommClearance('BLACK', this)">
+                    <span>BLACK</span>
+                    <span class="clr-sub" data-ru="Экстренный" data-en="Extremis">Экстренный</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-row-split">
+                <div class="form-group">
+                  <label id="lbl-sender">Позывной / Идентификатор Отправителя</label>
+                  <input type="text" id="senderName" class="comm-input" placeholder="Введите позывной или ранг..." autocomplete="off" oninput="updateCommPacketTelemetry()">
+                </div>
+                <div class="form-group">
+                  <label id="lbl-target-node">Активный Узел Получателя</label>
+                  <input type="text" id="commNodeReadout" class="comm-input" value="ПРЯМОЙ ВОКС // СУБЪЕКТ-884 [VERMILION]" readonly style="color:var(--gold);cursor:default;">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label id="lbl-msg">Пакет Данных Трансмиссии</label>
+                <textarea id="messageText" class="comm-input" rows="4" placeholder="Введите текст астропатической трансмиссии..." oninput="updateCommPacketTelemetry()"></textarea>
+              </div>
+            </div>
+
+            <div>
+              <button class="comm-btn" onclick="sendMessage()">&#9672;  ПЕРЕДАТЬ В ВАРП  &#9672;</button>
+              <div id="form-status"></div>
+            </div>
+          </div>
+
+          <!-- БУФЕР АСТРОПАТИЧЕСКИХ ТРАНСМИССИЙ -->
+          <div class="comm-log-box">
+            <div class="clb-head">
+              <span id="clb-head-title">ЖУРНАЛ ВОКС-БУФЕРА // ПОСЛЕДНИЕ ПАКЕТЫ В ЭФИРЕ</span>
+              <span style="color:var(--green-ok)" id="clb-head-status">◈ ОМНИ-СКРЕМБЛЕР: АКТИВЕН</span>
+            </div>
+            <div class="clb-feed" id="comm-live-feed">
+              <div class="clb-line">
+                <span class="clb-tag">[VERMILION // 884-IX]</span>
+                <span class="clb-txt">Омни-глушилки «Фобос» синхронизированы с орбитальным ретранслятором. Канал чист.</span>
+              </div>
+              <div class="clb-line">
+                <span class="clb-tag">[MAGENTA // WATCH-01]</span>
+                <span class="clb-txt">Астропатический Хор Караульной Крепости подтверждает приём телеметрии Истребительной Группы.</span>
+              </div>
+              <div class="clb-line">
+                <span class="clb-tag crit">[BLACK // ORDO XENOS]</span>
+                <span class="clb-txt">Протокол 884-OMEGA: контроль кортикального пульса субъекта в пределах допустимой нормы.</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div><!-- /comm-content -->
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        window._commClearance = 'VERMILION';
+        window._commRelayIdx  = 0;
+
+        var RELAY_NODES = {
+          ru: [
+            { name: 'ПРЯМОЙ ВОКС // СУБЪЕКТ-884', svg: 'NODE: PHOBOS DIRECT VOX', freq: '884.IX-PHOBOS', delay: '0.01 МКС' },
+            { name: 'УДАРНЫЙ КРЕЙСЕР КАРАУЛА',    svg: 'NODE: STRIKE CRUISER RELAY', freq: '420.ORBIT-DW', delay: '0.04 МКС' },
+            { name: 'КАРАУЛЬНАЯ КРЕПОСТЬ // ОРДО КСЕНОС', svg: 'NODE: WATCH FORTRESS CHOIR', freq: '001.SECTOR-HQ', delay: '0.18 МКС' }
+          ],
+          en: [
+            { name: 'DIRECT VOX // SUBJECT-884',  svg: 'NODE: PHOBOS DIRECT VOX', freq: '884.IX-PHOBOS', delay: '0.01 MS' },
+            { name: 'DEATHWATCH STRIKE CRUISER',  svg: 'NODE: STRIKE CRUISER RELAY', freq: '420.ORBIT-DW', delay: '0.04 MS' },
+            { name: 'WATCH FORTRESS // ORDO XENOS', svg: 'NODE: WATCH FORTRESS CHOIR', freq: '001.SECTOR-HQ', delay: '0.18 MS' }
+          ]
+        };
+
+        var WAVE_PATHS = {
+          OMICRON:   'M 25 155 Q 65 135, 105 155 T 180 155 T 255 155 T 335 155',
+          CYAN:      'M 25 155 Q 65 115, 105 155 T 180 155 T 255 155 T 335 155',
+          MAGENTA:   'M 25 155 Q 50 100, 85 155 T 155 155 T 225 155 T 295 155 T 335 155',
+          VERMILION: 'M 25 155 Q 65 85, 105 155 T 180 155 T 255 155 T 335 155',
+          BLACK:     'M 25 155 Q 42 55, 65 155 T 110 155 T 155 155 T 200 155 T 245 155 T 290 155 T 335 155'
+        };
+
+        function refreshCommReadouts() {
+          var isEn = (window._currentLang === 'en');
+          var rList = isEn ? RELAY_NODES.en : RELAY_NODES.ru;
+          var r = rList[window._commRelayIdx] || rList[0];
+          var clr = window._commClearance;
+
+          var topBdg = document.getElementById('comm-top-badge');
+          if (topBdg) topBdg.textContent = (isEn ? '◈ ENCRYPTION PROTOCOL: ' : '◈ ПРОТОКОЛ ШИФРОВАНИЯ: ') + clr;
+
+          var freqEl = document.getElementById('cb-freq-val');
+          if (freqEl) freqEl.textContent = (isEn ? 'FREQ: ' : 'ЧАСТОТА: ') + r.freq;
+
+          var svgNode = document.getElementById('comm-svg-node');
+          var svgClr  = document.getElementById('comm-svg-clr');
+          var svgWave = document.getElementById('comm-svg-wave');
+          if (svgNode) svgNode.textContent = r.svg;
+          if (svgClr)  svgClr.textContent  = 'CIPHER: ' + clr + ' GRADE';
+          if (svgWave && WAVE_PATHS[clr]) svgWave.setAttribute('d', WAVE_PATHS[clr]);
+
+          var ctv3 = document.getElementById('ct-v3');
+          var ctv4 = document.getElementById('ct-v4');
+          if (ctv3) ctv3.textContent = r.delay;
+          if (ctv4) ctv4.textContent = clr;
+
+          var nodeInput = document.getElementById('commNodeReadout');
+          if (nodeInput) nodeInput.value = r.name + ' [' + clr + ']';
+        }
+
+        window.selectCommRelay = function(idx, btnEl) {
+          window._commRelayIdx = idx;
+          document.querySelectorAll('#tab-comm .crs-btn').forEach(function(b, i) {
+            b.classList.toggle('active', i === idx);
+          });
+          refreshCommReadouts();
+        };
+
+        window.selectCommClearance = function(clrCode, btnEl) {
+          window._commClearance = clrCode;
+          document.querySelectorAll('#tab-comm .clr-btn').forEach(function(b) {
+            b.classList.toggle('active', b.getAttribute('data-clr') === clrCode);
+          });
+          refreshCommReadouts();
+        };
+
+        window.updateCommPacketTelemetry = function() {
+          var isEn = (window._currentLang === 'en');
+          var s = (document.getElementById('senderName').value || '');
+          var m = (document.getElementById('messageText').value || '');
+          var bytes = (s.length + m.length) * 2;
+          var hash = (0x8840 + ((bytes * 31) & 0x0FFF)).toString(16).toUpperCase();
+          var counter = document.getElementById('cp-byte-counter');
+          if (counter) {
+            counter.textContent = isEn
+              ? ('PACKET SIZE: ' + bytes + ' BYTES // HASH: 0x' + hash)
+              : ('ОБЪЁМ ПАКЕТА: ' + bytes + ' БАЙТ // ХЭШ: 0x' + hash);
+          }
+        };
+
+        /* Переопределение отправки: передаёт sender, message и urgency (уровень срочности) */
+        window.sendMessage = function() {
+          var isEn = (window._currentLang === 'en');
+          var name = document.getElementById('senderName').value.trim();
+          var msg  = document.getElementById('messageText').value.trim();
+          var st   = document.getElementById('form-status');
+          var btn  = document.querySelector('#tab-comm .comm-btn');
+          var clr  = window._commClearance || 'VERMILION';
+          var rList = isEn ? RELAY_NODES.en : RELAY_NODES.ru;
+          var relayName = (rList[window._commRelayIdx] || rList[0]).name;
+
+          if (!name || !msg) {
+            st.style.color = 'var(--crimson-bright)';
+            st.innerText = isEn ? 'ERROR: Complete all fields prior to transmission.' : 'ОШИБКА: Заполните все поля перед отправкой.';
+            return;
+          }
+
+          st.style.color = 'var(--text)';
+          st.innerText = isEn
+            ? ('ENCRYPTING [' + clr + '] & TRANSMITTING VIA WARP-BEACON...')
+            : ('ШИФРОВАНИЕ [' + clr + '] И ПЕРЕДАЧА ЧЕРЕЗ ВАРП-МАЯК...');
+          btn.disabled = true;
+
+          var scriptURL = 'https://script.google.com/macros/s/AKfycbz62mS5Z81uijCTZD0wV0yX3UkdiSMMSZPH7PYykeA26p2QGpHlWwegVZYLNDEyeM0i/exec';
+          var fd = new FormData();
+          fd.append('sender', name);
+          fd.append('message', msg);
+          /* Передаём уровень срочности для следующего столбца таблицы */
+          fd.append('urgency', clr);
+          fd.append('priority', clr);
+          fd.append('clearance', clr);
+          fd.append('relay', relayName);
+
+          fetch(scriptURL, { method: 'POST', body: fd, mode: 'no-cors' })
+            .then(function() {
+              /* Добавляем отправленное сообщение в живой буфер снизу */
+              var feed = document.getElementById('comm-live-feed');
+              if (feed) {
+                var row = document.createElement('div');
+                row.className = 'clb-line';
+                var isCrit = (clr === 'BLACK' || clr === 'VERMILION');
+                row.innerHTML =
+                  '<span class="clb-tag' + (isCrit ? ' crit' : '') + '">[' + clr + ' // ' + name.toUpperCase() + ']</span>' +
+                  '<span class="clb-txt">' + msg.replace(/</g, '&lt;') + '</span>';
+                feed.insertBefore(row, feed.firstChild);
+              }
+
+              document.getElementById('senderName').value = '';
+              document.getElementById('messageText').value = '';
+              window.updateCommPacketTelemetry();
+
+              st.style.color = 'var(--gold)';
+              st.innerText = isEn
+                ? ('TRANSMISSION [' + clr + '] RELAYED THROUGH THE WARP-BEACON.')
+                : ('ТРАНСМИССИЯ [' + clr + '] УСПЕШНО ПЕРЕДАНА ЧЕРЕЗ ВАРП-МАЯК.');
+              btn.disabled = false;
+              setTimeout(function() { st.innerText = ''; }, 5000);
+            })
+            .catch(function() {
+              st.style.color = 'var(--crimson-bright)';
+              st.innerText = isEn ? 'CRITICAL VOX FAILURE. WARP-BEACON UNREACHABLE.' : 'КРИТИЧЕСКАЯ ОШИБКА СВЯЗИ. ВАРП-МАЯК НЕДОСТУПЕН.';
+              btn.disabled = false;
+            });
+        };
+
+        /* Привязка к переключателю языка RU / EN */
+        var prevApplyLang = window.applySiteLanguage;
+        if (prevApplyLang) {
+          window.applySiteLanguage = function(lang) {
+            prevApplyLang(lang);
+            var isEn = (lang === 'en');
+            document.getElementById('cb-head-title').textContent = isEn ? 'IMMATERIUM DIRECTION FINDER' : 'ПЕЛЕНГАТОР ИММАТЕРИУМА';
+            document.getElementById('ct-k1').textContent = isEn ? 'ETHER PURITY:' : 'ЧИСТОТА ЭФИРА:';
+            document.getElementById('ct-k2').textContent = isEn ? 'HEXAGRAM:' : 'ГЕКСАГРАММА:';
+            document.getElementById('ct-v2').textContent = isEn ? 'ACTIVE' : 'АКТИВНА';
+            document.getElementById('ct-k3').textContent = isEn ? 'CHOIR LATENCY:' : 'ЗАДЕРЖКА ХОРА:';
+            document.getElementById('ct-k4').textContent = isEn ? 'OMNI-CIPHER:' : 'ОМНИ-ШИФР:';
+            document.getElementById('crs-label').textContent = isEn ? 'ASTROPATHIC RELAY ROUTE:' : 'МАРШРУТ АСТРОПАТИЧЕСКОГО РЕЛЕ:';
+
+            var relayLabels = isEn
+              ? [['01. DIRECT VOX // SUBJECT-884', '[ PHOBOS-LINK ]'], ['02. DEATHWATCH STRIKE CRUISER', '[ ORBITAL RELAY ]'], ['03. WATCH FORTRESS // ORDO XENOS', '[ SECTOR CHOIR ]']]
+              : [['01. ПРЯМОЙ ВОКС // СУБЪЕКТ-884', '[ ФОБОС-ЛИНК ]'], ['02. УДАРНЫЙ КРЕЙСЕР КАРАУЛА', '[ ОРБИТА ТВД ]'], ['03. КАРАУЛЬНАЯ КРЕПОСТЬ // ОРДО КСЕНОС', '[ ХОР СЕКТОРА ]']];
+            document.querySelectorAll('#tab-comm .crs-btn').forEach(function(btn, i) {
+              var spans = btn.querySelectorAll('span');
+              if (spans[0] && relayLabels[i]) spans[0].textContent = relayLabels[i][0];
+              if (spans[1] && relayLabels[i]) spans[1].textContent = relayLabels[i][1];
+            });
+
+            document.getElementById('cp-console-title').textContent = isEn
+              ? 'PACKET ASSEMBLY CONSOLE // CHANNEL OPEN'
+              : 'ПУЛЬТ ФОРМИРОВАНИЯ ПАКЕТА // КАНАЛ ОТКРЫТ';
+            document.getElementById('clr-group-lbl').textContent = isEn
+              ? 'Cipher Grade / Urgency Level (Logged to Registry):'
+              : 'Кодировка Шифра / Уровень Срочности (Передаётся в Реестр):';
+
+            document.querySelectorAll('#tab-comm .clr-sub').forEach(function(el) {
+              el.textContent = isEn ? el.getAttribute('data-en') : el.getAttribute('data-ru');
+            });
+
+            document.getElementById('lbl-sender').textContent = isEn ? 'Sender Callsign / Identifier' : 'Позывной / Идентификатор Отправителя';
+            document.getElementById('lbl-target-node').textContent = isEn ? 'Active Recipient Node' : 'Активный Узел Получателя';
+            document.getElementById('lbl-msg').textContent = isEn ? 'Transmission Data Packet' : 'Пакет Данных Трансмиссии';
+            document.getElementById('senderName').placeholder = isEn ? 'Enter callsign or rank...' : 'Введите позывной или ранг...';
+            document.getElementById('messageText').placeholder = isEn ? 'Enter astropathic transmission text...' : 'Введите текст астропатической трансмиссии...';
+            document.querySelector('#tab-comm .comm-btn').innerHTML = isEn ? '&#9672;  TRANSMIT TO WARP  &#9672;' : '&#9672;  ПЕРЕДАТЬ В ВАРП  &#9672;';
+
+            document.getElementById('clb-head-title').textContent = isEn
+              ? 'VOX-BUFFER LOG // RECENT ETHER PACKETS'
+              : 'ЖУРНАЛ ВОКС-БУФЕРА // ПОСЛЕДНИЕ ПАКЕТЫ В ЭФИРЕ';
+            document.getElementById('clb-head-status').textContent = isEn
+              ? '◈ OMNI-SCRAMBLER: ACTIVE'
+              : '◈ ОМНИ-СКРЕМБЛЕР: АКТИВЕН';
+
+            refreshCommReadouts();
+            window.updateCommPacketTelemetry();
+          };
+        }
+
+        refreshCommReadouts();
+      });
+    </script>
   </section>
 
 </div>
