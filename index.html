@@ -1394,7 +1394,7 @@
     border-top: 2px solid var(--gold);
     padding: 22px 34px 20px; position: relative;
     display: flex; flex-direction: column; justify-content: space-between;
-    height: 438px; max-height: 438px; /* Фиксирует размер один-в-один с левой колонкой */
+    height: 620px; max-height: 620px; /* Фиксирует размер один-в-один с левой колонкой */
     box-shadow: inset 0 0 50px rgba(0,0,0,0.85), 0 0 25px rgba(0,0,0,0.6);
   }
   .sublim-reader::after {
@@ -4361,7 +4361,7 @@
         <span class="w-mark">&#9888;</span> ВНИМАНИЕ: Обнаружены скрытые текстовые массивы. Субъект использует ритмичную текстовую сублимацию (поэзию) во время длительных засад для подавления пульса и контроля над Красной Жаждой. Тексты наносятся на пергамент и фиксируются на стволе болт-снайперской винтовки.
       </div>
 
-      <div class="stabilization-banner active" id="sublim-banner">
+      <div class="stabilization-banner" id="sublim-banner">
         <span>◈ КОГНИТИВНАЯ СТАБИЛИЗАЦИЯ АКТИВНА: КАРДИО-РИТМ СНИЖЕН ДО 28 УД/МИН</span>
         <span>РИСК СРЫВА: ПОДАВЛЕН (18%)</span>
       </div>
@@ -4369,11 +4369,11 @@
       <div class="sublim-workspace">
         <!-- ЛЕВАЯ КОЛОНКА: СПИСОК ИЗ 5 СВИТКОВ -->
         <div class="sublim-list">
-          <div class="log-entry open active-slot" id="sub-1" onclick="selectSublimSlot(0)">
+          <div class="log-entry" id="sub-1" onclick="selectSublimSlot(0)">
             <div class="log-hd">
               <div class="log-hd-top">
                 <span class="log-num">ЛОГ-01 // СВИТОК I</span>
-                <span class="log-enc decoded" id="enc-sub-1">Расшифровано</span>
+                <span class="log-enc" id="enc-sub-1">Зашифровано</span>
               </div>
               <span class="log-title-text">Контроль Пульса Перед Выстрелом</span>
             </div>
@@ -4574,13 +4574,28 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        var _curSublimIdx = 0;
+        var _curSublimIdx = -1;
 
-        /* Авто-клонирование готовой печати Инквизиции из Досье (без дублирования SVG-кода) */
         var origSealSvg = document.querySelector('.inquisition-seal-box .isb-svg');
         var waxSlot = document.getElementById('sr-wax-svg-slot');
         if (origSealSvg && waxSlot) {
           waxSlot.appendChild(origSealSvg.cloneNode(true));
+        }
+
+        function setStandbyReader() {
+          var isEn = (window._currentLang === 'en');
+          document.getElementById('sr-eyebrow').textContent = isEn
+            ? 'EXECUTOR BARREL PARCHMENT // STANDBY'
+            : 'ПЕРГАМЕНТ СТВОЛА EXECUTOR // ОЖИДАНИЕ';
+          document.getElementById('sr-title').textContent = isEn
+            ? 'Select a Scroll for Decryption'
+            : 'Выберите свиток для дешифровки';
+          document.getElementById('sr-rhythm').textContent = isEn
+            ? '◈ CARDIO-RHYTHM: 42 BPM (STANDARD)'
+            : '◈ КАРДИО-РИТМ: 42 УД/МИН (ШТАТНЫЙ)';
+          document.getElementById('sr-poem-view').textContent = isEn
+            ? '[ ENCRYPTED TEXT ARRAY ]\n\nSelect one of the five parchment slots on the left to break the cipher and engage cognitive pulse stabilization (28 BPM).'
+            : '[ ТЕКСТОВЫЙ МАССИВ ЗАШИФРОВАН ]\n\nВыберите один из пяти слотов пергамента слева для снятия шифра и активации когнитивного тормоза пульса (28 УД/МИН).';
         }
 
         window.selectSublimSlot = function(idx) {
@@ -4593,7 +4608,6 @@
           var isEn = (window._currentLang === 'en');
           var target = entries[idx];
 
-          /* Отмечаем выбранный слот как расшифрованный и активный */
           entries.forEach(function(el, i) {
             el.classList.toggle('active-slot', i === idx);
           });
@@ -4605,7 +4619,6 @@
             badge.classList.add('decoded');
           }
 
-          /* Берем текст и заголовок напрямую из слота */
           var titleTxt = target.querySelector('.log-title-text').textContent;
           var poemTxt  = target.querySelector('.log-poem').textContent;
           var codeNum  = '0' + (idx + 1);
@@ -4614,24 +4627,31 @@
             ? ('EXECUTOR BARREL PARCHMENT // LOG-' + codeNum)
             : ('ПЕРГАМЕНТ СТВОЛА EXECUTOR // ЛОГ-' + codeNum);
           document.getElementById('sr-title').textContent = titleTxt;
+          document.getElementById('sr-rhythm').textContent = isEn
+            ? '◈ CARDIO-RHYTHM: 28 BPM // BREATH 4-7-8'
+            : '◈ КАРДИО-РИТМ: 28 УД/МИН // ДЫХАНИЕ 4-7-8';
 
           var poemView = document.getElementById('sr-poem-view');
           poemView.style.animation = 'none';
           void poemView.offsetWidth;
           poemView.style.animation = '';
           poemView.textContent = poemTxt;
+          poemView.parentElement.scrollTop = 0;
 
           if (window.syncBioWithSublimation) window.syncBioWithSublimation();
         };
 
         window.stepSublimSlot = function(dir) {
-          window.selectSublimSlot(_curSublimIdx + dir);
+          if (_curSublimIdx === -1) {
+            window.selectSublimSlot(0);
+          } else {
+            window.selectSublimSlot(_curSublimIdx + dir);
+          }
         };
 
-        /* Инициализация первого свитка при старте */
-        window.selectSublimSlot(0);
+        /* Со старта свитки закрыты, пульс 42 УД/МИН */
+        setStandbyReader();
 
-        /* Поддержка переключения языка RU / EN */
         var prevApplyLang = window.applySiteLanguage;
         if (prevApplyLang) {
           window.applySiteLanguage = function(lang) {
@@ -4639,9 +4659,6 @@
             var isEn = (lang === 'en');
             var topBdg = document.getElementById('sublim-top-badge');
             if (topBdg) topBdg.textContent = isEn ? '◈ BARREL PARCHMENTS: 05 SCROLLS' : '◈ ПЕРГАМЕНТЫ СТВОЛА: 05 СВИТКОВ';
-            document.getElementById('sr-rhythm').textContent = isEn
-              ? '◈ CARDIO-RHYTHM: 28 BPM // BREATH 4-7-8'
-              : '◈ КАРДИО-РИТМ: 28 УД/МИН // ДЫХАНИЕ 4-7-8';
             document.getElementById('sr-wax-title').textContent = isEn
               ? 'DEATHWATCH WAX SEAL'
               : 'СУРГУЧНОЕ КЛЕЙМО КАРАУЛА СМЕРТИ';
@@ -4657,7 +4674,11 @@
               el.textContent = isEn ? scrollNamesEn[i] : scrollNamesRu[i];
             });
 
-            window.selectSublimSlot(_curSublimIdx);
+            if (_curSublimIdx === -1) {
+              setStandbyReader();
+            } else {
+              window.selectSublimSlot(_curSublimIdx);
+            }
           };
         }
       });
