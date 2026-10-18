@@ -1822,14 +1822,14 @@
   }
 
 /* ══════════════════════════════════════════════
-     TAB: АСТРОГРАФИЯ (ОРБИТАЛЬНЫЙ ГОЛОЛИТ КАЭЛИС-9)
+     TAB: АСТРОГРАФИЯ (ХАБ СИСТЕМЫ + ГОЛОЛИТ КАЭЛИС-9)
   ══════════════════════════════════════════════ */
   .astro-toolbar {
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 10px; margin-bottom: 18px;
     padding: 12px 16px; background: var(--panel); border: 1px solid var(--border-bright);
   }
-  .astro-layers, .astro-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+  .astro-layers, .astro-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .astro-btn {
     padding: 7px 13px; background: rgba(0,0,0,0.75);
     border: 1px solid var(--border-bright); color: var(--text-dim);
@@ -1842,15 +1842,137 @@
     background: rgba(192,57,43,0.18); border-color: var(--gold);
     color: var(--gold-bright); box-shadow: 0 0 12px rgba(201,168,76,0.2);
   }
-  .astro-btn.tool-highlight { border-color: var(--crimson-dark); color: var(--crimson-bright); }
-  .astro-btn.tool-highlight:hover { background: rgba(192,57,43,0.2); border-color: var(--crimson-bright); color: #fff; }
+  .astro-btn.back-hub-btn {
+    border-color: var(--gold); color: var(--gold-bright);
+    background: rgba(201,168,76,0.12);
+  }
+  .astro-btn.back-hub-btn:hover {
+    background: rgba(201,168,76,0.26); color: #fff;
+    box-shadow: 0 0 14px rgba(201,168,76,0.35);
+  }
 
-    .astro-workspace {
+  /* Яркая кнопка ГОЛОЛИТ НА ВЕСЬ ЭКРАН */
+  .astro-btn.tool-highlight {
+    background: linear-gradient(90deg, rgba(192,57,43,0.32), rgba(201,168,76,0.22));
+    border: 1px solid var(--gold-bright);
+    color: var(--gold-bright);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(229,195,101,0.5);
+    box-shadow: 0 0 14px rgba(192,57,43,0.35), inset 0 0 8px rgba(201,168,76,0.18);
+  }
+  .astro-btn.tool-highlight:hover {
+    background: linear-gradient(90deg, rgba(229,57,53,0.5), rgba(229,195,101,0.35));
+    border-color: #fff; color: #fff;
+    box-shadow: 0 0 22px rgba(229,195,101,0.55);
+  }
+
+  /* ── ЭКРАН 1: ХАБ ПЛАНЕТАРНОЙ СИСТЕМЫ «КАЛЛИДИС ЛЮМЕН» ── */
+  .sys-hub-wrap {
+    display: flex; flex-direction: column; gap: 16px;
+    animation: fadeUp 0.35s ease-out;
+  }
+  .sys-hub-stage {
+    position: relative; width: 100%;
+    background: #030001; border: 1px solid var(--border-gold);
+    box-shadow: 0 0 45px rgba(0,0,0,0.95), inset 0 0 60px rgba(192,57,43,0.15);
+    overflow: hidden;
+  }
+  .sys-hub-stage::after {
+    content: ''; position: absolute; left: 0; right: 0; top: -20%; height: 15%;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.12), rgba(192,57,43,0.15), transparent);
+    pointer-events: none; z-index: 4;
+    animation: holo-scanline 6.5s linear infinite;
+  }
+  .sys-hub-img {
+    width: 100%; height: auto; display: block;
+    filter: contrast(106%) brightness(0.94);
+  }
+  .sys-hub-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3;
+  }
+
+  /* Обводки планет в Хабе */
+  .sys-node { cursor: not-allowed; opacity: 0.78; transition: all 0.25s ease; }
+  .sys-node:hover { opacity: 1; }
+  .sys-node-ring {
+    fill: rgba(10, 2, 2, 0.15); stroke: rgba(201, 168, 76, 0.55);
+    stroke-width: 1.5; stroke-dasharray: 7 4;
+    transition: all 0.25s ease;
+  }
+  .sys-node:hover .sys-node-ring {
+    stroke: var(--crimson-bright); stroke-width: 2;
+    fill: rgba(192, 57, 43, 0.18);
+  }
+  .sys-node-star {
+    fill: none; stroke: rgba(229, 57, 53, 0.45);
+    stroke-width: 1.4; stroke-dasharray: 12 6;
+    transform-origin: 523px 225px;
+    animation: radar-spin 40s linear infinite;
+  }
+
+  /* Активная планета Каэлис-9 */
+  .sys-node.clickable { cursor: pointer; opacity: 1; }
+  .sys-caelis-outer {
+    fill: rgba(192, 57, 43, 0.16); stroke: var(--gold-bright);
+    stroke-width: 2.2; stroke-dasharray: 12 5;
+    transform-origin: 206px 147px;
+    animation: radar-spin 14s linear infinite;
+    transition: all 0.25s ease;
+  }
+  .sys-caelis-inner {
+    fill: none; stroke: #ff3020; stroke-width: 1.8;
+    transition: all 0.25s ease;
+  }
+  .sys-caelis-pulse {
+    fill: none; stroke: var(--gold-bright); stroke-width: 1.6;
+    transform-origin: 206px 147px;
+    animation: sys-caelis-wave 2.2s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes sys-caelis-wave {
+    0%   { transform: scale(0.95); opacity: 0.95; }
+    100% { transform: scale(1.55); opacity: 0; }
+  }
+  .sys-node.clickable:hover .sys-caelis-outer {
+    stroke: #fff; fill: rgba(229, 57, 53, 0.32);
+    filter: drop-shadow(0 0 14px var(--gold));
+  }
+  .sys-node.clickable:hover .sys-caelis-inner { stroke: var(--gold-bright); stroke-width: 2.5; }
+
+  .sys-badge-bg {
+    fill: rgba(8, 2, 2, 0.92); stroke: var(--gold); stroke-width: 1.2;
+    transition: all 0.25s;
+  }
+  .sys-node.clickable:hover .sys-badge-bg {
+    fill: rgba(192, 57, 43, 0.92); stroke: #fff;
+  }
+  .sys-badge-txt {
+    font-family: 'Share Tech Mono', monospace; font-size: 10.5px;
+    fill: var(--gold-bright); letter-spacing: 1.2px; font-weight: 700;
+    pointer-events: none;
+  }
+  .sys-node.clickable:hover .sys-badge-txt { fill: #fff; }
+
+  /* Нижняя инфо-полоса Хаба */
+  .sys-hub-footer {
+    background: var(--panel); border: 1px solid var(--border-bright);
+    border-left: 3px solid var(--gold); padding: 14px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 14px;
+  }
+  .shf-info { display: flex; flex-direction: column; gap: 4px; }
+  .shf-title {
+    font-family: 'Cinzel', serif; font-size: 1rem; color: var(--gold-bright); letter-spacing: 1.5px;
+  }
+  .shf-sub {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.8px;
+  }
+
+  /* ── ЭКРАН 2: ДЕТАЛЬНЫЙ ГОЛОЛИТ КАЭЛИС-9 ── */
+  .astro-workspace {
     display: grid; grid-template-columns: minmax(420px, 42%) 1fr;
     gap: 28px; align-items: start;
   }
-
-  /* Контейнер карты с голографической развёрткой «Кчау» */
   .hololith-stage {
     position: relative; width: 100%; aspect-ratio: 1 / 1;
     background: #030000; border: 1px solid var(--border-bright);
@@ -1865,7 +1987,6 @@
     70%  { transform: scaleY(1.02) scaleX(0.99); filter: brightness(1.5) saturate(1.4); }
     100% { transform: scaleY(1) scaleX(1); filter: brightness(1); opacity: 1; }
   }
-  /* Лазерная волна сканирования поверх глобуса */
   .hololith-stage::after {
     content: ''; position: absolute; left: 0; right: 0; top: -20%; height: 18%;
     background: linear-gradient(to bottom, transparent, rgba(229,57,53,0.14), rgba(201,168,76,0.22), transparent);
@@ -1876,20 +1997,13 @@
 
   .holo-map-img {
     width: 100%; height: 100%; object-fit: cover; display: block;
-    /* Режим Ауспекса по умолчанию — приводит сине-зелёную карту к стилю терминала */
     filter: sepia(55%) hue-rotate(315deg) saturate(150%) contrast(120%) brightness(0.84);
     transition: filter 0.45s ease;
   }
-  .hololith-stage. optical-mode .holo-map-img,
-  .hololith-stage.optical-mode .holo-map-img {
-    filter: contrast(108%) brightness(0.95);
-  }
-
   .holo-svg-overlay {
     position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3;
   }
 
-  /* Узлы на карте */
   .astro-pin { cursor: pointer; transition: opacity 0.25s ease; }
   .astro-pin .pin-outer {
     fill: rgba(10, 2, 2, 0.55); stroke: var(--gold); stroke-width: 2;
@@ -1925,7 +2039,6 @@
   }
   .astro-pin.active .pin-tag { fill: var(--gold-bright); }
 
-  /* Слой пеленга Тау и рубежей Империума */
   .layer-group { opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
   .layer-group.visible { opacity: 1; pointer-events: auto; }
   .tau-reticle {
@@ -1939,7 +2052,6 @@
     animation: radar-spin 12s linear infinite reverse;
   }
 
-  /* Правая HUD-панель описания объекта */
   .astro-hud-panel {
     background: var(--panel); border: 1px solid var(--border-bright);
     border-top: 2px solid var(--gold); padding: 24px 26px; position: relative;
@@ -4163,31 +4275,117 @@
   </section>
 
 <!-- ════════════════════════════════════════════
-       TAB: АСТРОГРАФИЯ (ОРБИТАЛЬНЫЙ ГОЛОЛИТ КАЭЛИС-9)
+       TAB: АСТРОГРАФИЯ (ХАБ СИСТЕМЫ + ГОЛОЛИТ КАЭЛИС-9)
   ════════════════════════════════════════════ -->
   <section id="tab-astro" class="tab">
     <div class="pg-head">
-      <div class="pg-eyebrow">НАВИГАЦИОННЫЙ КОГИТАТОР // УДАРНЫЙ КРЕЙСЕР КАРАУЛА СМЕРТИ // ОРБИТАЛЬНАЯ ПРОЕКЦИЯ</div>
+      <div class="pg-eyebrow" id="astro-pg-eyebrow">НАВИГАЦИОННЫЙ КОГИТАТОР // УДАРНЫЙ КРЕЙСЕР КАРАУЛА СМЕРТИ // КАРТА СИСТЕМЫ</div>
       <div class="pg-title">
-        Астрография: Мир Каэлис-9
-        <span class="status-badge">◈ СТАТУС ТВД: ЗОНА КСЕНО-ЭКСПАНСИИ (ТАУ)</span>
+        <span id="astro-pg-main-title">Система Каллидис Люмен</span>
+        <span class="status-badge" id="astro-pg-badge">◈ АКТИВНЫЙ ТВД: КАЭЛИС-9</span>
       </div>
     </div>
 
-    <!-- Панель управления слоями и спектром -->
+    <!-- Панель управления (динамически меняет кнопки между Хабом и Планетой) -->
     <div class="astro-toolbar">
-      <div class="astro-layers">
-        <button class="astro-btn active" onclick="setAstroLayer('main', this)">[ 01. ОБЗОР ТВД И ОПЕРАЦИИ ]</button>
-        <button class="astro-btn" onclick="setAstroLayer('tau', this)">[ 02. ПЕЛЕНГ КСЕНОСОВ (ТАУ) ]</button>
-        <button class="astro-btn" onclick="setAstroLayer('imp', this)">[ 03. РУБЕЖИ ИМПЕРИУМА ]</button>
+      <!-- Кнопки в режиме Хаба Системы -->
+      <div class="astro-layers" id="astro-hub-bar-left">
+        <button class="astro-btn active" id="astro-open-caelis-btn" onclick="openAstroPlanet('caelis')">[ ◈ ОТКРЫТЬ ТВД: КАЭЛИС-9 ]</button>
       </div>
-        <div class="astro-tools">
-        <button class="astro-btn" id="astro-spectrum-btn" onclick="toggleAstroSpectrum()">[ СПЕКТР: АУСПЕКС ]</button>
+
+      <!-- Кнопки в режиме Планеты Каэлис-9 -->
+      <div class="astro-layers" id="astro-planet-bar-left" style="display:none;">
+        <button class="astro-btn back-hub-btn" id="astro-back-hub-btn" onclick="closeAstroPlanet()">[ ◄ КАРТА СИСТЕМЫ ]</button>
+        <button class="astro-btn active" id="alayer-btn-0" onclick="setAstroLayer('main', this)">[ 01. ОБЗОР ТВД И ОПЕРАЦИИ ]</button>
+        <button class="astro-btn" id="alayer-btn-1" onclick="setAstroLayer('tau', this)">[ 02. ПЕЛЕНГ КСЕНОСОВ (ТАУ) ]</button>
+        <button class="astro-btn" id="alayer-btn-2" onclick="setAstroLayer('imp', this)">[ 03. РУБЕЖИ ИМПЕРИУМА ]</button>
+      </div>
+
+      <div class="astro-tools">
+        <!-- Скрытая заглушка, чтобы старый локализатор не выдал ошибку -->
+        <span id="astro-spectrum-btn" style="display:none;"></span>
         <button class="astro-btn tool-highlight" id="astro-fs-btn" onclick="toggleAstroFullscreen()">[ ⛶ ГОЛОЛИТ НА ВЕСЬ ЭКРАН ]</button>
       </div>
     </div>
 
-    <div class="astro-workspace">
+    <!-- ══ ЭКРАН 1: ИНТЕРАКТИВНЫЙ ХАБ СИСТЕМЫ «КАЛЛИДИС ЛЮМЕН» ══ -->
+    <div class="sys-hub-wrap" id="astro-system-hub">
+      <div class="sys-hub-stage">
+        <img class="sys-hub-img" id="sys-hub-img"
+             src="https://dl.dropboxusercontent.com/scl/fi/8x43v26x508g64uboaupf/SystemRUS.jpg?rlkey=0jrfx6anpc60k0vqix6xo6y4u&st=3w8cwhg0"
+             alt="Система Каллидис Люмен"
+             draggable="false">
+
+        <svg class="sys-hub-svg" viewBox="0 0 1000 462" xmlns="http://www.w3.org/2000/svg">
+          <!-- Прицельная сетка сектора -->
+          <line x1="523" y1="0" x2="523" y2="462" stroke="rgba(201,168,76,0.12)" stroke-width="0.8" stroke-dasharray="6 6"/>
+          <line x1="0" y1="225" x2="1000" y2="225" stroke="rgba(201,168,76,0.12)" stroke-width="0.8" stroke-dasharray="6 6"/>
+
+          <!-- Звезда: Каллидис Люмен -->
+          <g class="sys-node" onclick="previewSystemBody(0)">
+            <circle class="sys-node-star" cx="523" cy="225" r="56"/>
+            <circle cx="523" cy="225" r="46" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+          </g>
+
+          <!-- Неактивные планеты (обведены тактическими кольцами) -->
+          <!-- Морталис-16 -->
+          <g class="sys-node" onclick="previewSystemBody(1)">
+            <circle class="sys-node-ring" cx="62" cy="222" r="34"/>
+            <circle cx="62" cy="222" r="28" fill="none" stroke="rgba(192,57,43,0.35)" stroke-width="1"/>
+          </g>
+          <!-- Веррон-Прайм -->
+          <g class="sys-node" onclick="previewSystemBody(2)">
+            <circle class="sys-node-ring" cx="259" cy="119" r="21"/>
+          </g>
+          <!-- Флорис-4 (координаты из комплекса Энигма) -->
+          <g class="sys-node" onclick="previewSystemBody(3)">
+            <circle class="sys-node-ring" cx="684" cy="212" r="35" style="stroke:#e53935;stroke-width:1.8;"/>
+            <circle cx="684" cy="212" r="29" fill="none" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
+          </g>
+          <!-- Гегемон -->
+          <g class="sys-node" onclick="previewSystemBody(4)">
+            <circle class="sys-node-ring" cx="735" cy="171" r="29"/>
+          </g>
+          <!-- Солус-7 -->
+          <g class="sys-node" onclick="previewSystemBody(5)">
+            <circle class="sys-node-ring" cx="758" cy="329" r="27"/>
+          </g>
+          <!-- Кредион -->
+          <g class="sys-node" onclick="previewSystemBody(6)">
+            <circle class="sys-node-ring" cx="792" cy="357" r="17"/>
+          </g>
+          <!-- Маркесс-8 -->
+          <g class="sys-node" onclick="previewSystemBody(7)">
+            <circle class="sys-node-ring" cx="896" cy="209" r="34"/>
+            <circle cx="896" cy="209" r="28" fill="none" stroke="rgba(192,57,43,0.35)" stroke-width="1"/>
+          </g>
+
+          <!-- ★ КЛИКАБЕЛЬНАЯ ПЛАНЕТА: КАЭЛИС-9 ★ -->
+          <g class="sys-node clickable" onclick="openAstroPlanet('caelis')">
+            <circle class="sys-caelis-pulse" cx="206" cy="147" r="38"/>
+            <circle class="sys-caelis-outer" cx="206" cy="147" r="42"/>
+            <circle class="sys-caelis-inner" cx="206" cy="147" r="33"/>
+            <!-- Угловые скобки захвата цели -->
+            <path d="M160 112 L160 100 L172 100 M252 112 L252 100 L240 100 M160 182 L160 194 L172 194 M252 182 L252 194 L240 194"
+                  fill="none" stroke="#e5c365" stroke-width="2"/>
+            <!-- Плашка вызова досье -->
+            <rect class="sys-badge-bg" x="128" y="66" width="156" height="22" rx="2"/>
+            <text class="sys-badge-txt" x="206" y="81" text-anchor="middle" id="sys-caelis-tag">[ ◈ ОТКРЫТЬ ТВД ]</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="sys-hub-footer">
+        <div class="shf-info">
+          <div class="shf-title" id="shf-title">КАЭЛИС-9 // АКТИВНАЯ ЗОНА БОЕВЫХ ДЕЙСТВИЙ</div>
+          <div class="shf-sub" id="shf-sub">Нажмите на планету Каэлис-9 на карте сектора для развёртки орбитального гололита и тактических сводок Истребительной Группы.</div>
+        </div>
+        <button class="astro-btn back-hub-btn" id="shf-enter-btn" onclick="openAstroPlanet('caelis')">[ ↗ РАЗВЕРНУТЬ ДОСЬЕ КАЭЛИС-9 ]</button>
+      </div>
+    </div>
+
+    <!-- ══ ЭКРАН 2: ДЕТАЛЬНОЕ ДОСЬЕ И ГОЛОЛИТ КАЭЛИС-9 ══ -->
+    <div class="astro-workspace" id="astro-caelis-view" style="display:none;">
       <!-- Левая часть: Голографический глобус Каэлис-9 -->
       <div class="hololith-stage" id="hololith-stage">
         <img class="holo-map-img"
@@ -4196,13 +4394,12 @@
              draggable="false">
 
         <svg class="holo-svg-overlay" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-          <!-- Орбитальные декоративные кольца прицела -->
           <circle cx="500" cy="500" r="465" fill="none" stroke="rgba(201,168,76,0.22)" stroke-width="1.5" stroke-dasharray="18 10"/>
           <circle cx="500" cy="500" r="448" fill="none" stroke="rgba(192,57,43,0.25)" stroke-width="1" stroke-dasharray="6 14"/>
           <line x1="500" y1="20" x2="500" y2="980" stroke="rgba(192,57,43,0.14)" stroke-width="1"/>
           <line x1="20" y1="500" x2="980" y2="500" stroke="rgba(192,57,43,0.14)" stroke-width="1"/>
 
-          <!-- СЛОЙ 2: ПЕЛЕНГ ПОЗИЦИЙ ТАУ (6 чёрных кругов на карте) -->
+          <!-- СЛОЙ 2: ПЕЛЕНГ ПОЗИЦИЙ ТАУ -->
           <g class="layer-group" id="astro-layer-tau">
             <g><circle class="tau-reticle" cx="210" cy="346" r="42"/><circle cx="210" cy="346" r="6" fill="#ff2a1a"/></g>
             <g><circle class="tau-reticle" cx="349" cy="421" r="42"/><circle cx="349" cy="421" r="6" fill="#ff2a1a"/></g>
@@ -4212,7 +4409,7 @@
             <g><circle class="tau-reticle" cx="355" cy="654" r="42"/><circle cx="355" cy="654" r="6" fill="#ff2a1a"/></g>
           </g>
 
-          <!-- СЛОЙ 3: РУБЕЖИ ОБОРОНЫ ИМПЕРИУМА (6 крылатых черепов) -->
+          <!-- СЛОЙ 3: РУБЕЖИ ОБОРОНЫ ИМПЕРИУМА -->
           <g class="layer-group" id="astro-layer-imp">
             <g><circle class="imp-reticle" cx="356" cy="158" r="46"/><circle cx="356" cy="158" r="6" fill="#e5c365"/></g>
             <g><circle class="imp-reticle" cx="235" cy="263" r="46"/><circle cx="235" cy="263" r="6" fill="#e5c365"/></g>
@@ -4222,12 +4419,10 @@
             <g><circle class="imp-reticle" cx="753" cy="656" r="46"/><circle cx="753" cy="656" r="6" fill="#e5c365"/></g>
           </g>
 
-          <!-- СЛОЙ 1 (ОСНОВНОЙ): ВЕКТОР МАРШ-БРОСКА И КЛИКАБЕЛЬНЫЕ УЗЛЫ -->
+          <!-- СЛОЙ 1 (ОСНОВНОЙ): КЛИКАБЕЛЬНЫЕ УЗЛЫ КАЭЛИС-9 -->
           <g class="layer-group visible" id="astro-layer-main">
-            <!-- Вектор перехода от Крепости Вертис (ОП-01) к Крестику на границе (ОП-02) -->
             <path d="M 408 320 L 304 388 L 278 468" fill="none" stroke="#ff2a1a" stroke-width="3" stroke-dasharray="8 6"/>
 
-            <!-- 0. ОП-01: Крепость Вертис (Золотой шпиль) -->
             <g class="astro-pin pin-mission active" id="apin-0" onclick="selectAstroNode(0)">
               <circle class="pin-pulse-ring" cx="408" cy="320" r="18"/>
               <circle class="pin-outer" cx="408" cy="320" r="14"/>
@@ -4235,7 +4430,6 @@
               <text class="pin-tag" x="428" y="325">ОП-01: ВЕРТИС</text>
             </g>
 
-            <!-- 1. ОП-02: Точка на стыке регионов (Красный крестик) -->
             <g class="astro-pin pin-mission" id="apin-1" onclick="selectAstroNode(1)">
               <circle class="pin-pulse-ring" cx="304" cy="388" r="18"/>
               <circle class="pin-outer" cx="304" cy="388" r="14"/>
@@ -4244,58 +4438,35 @@
               <text class="pin-tag" x="175" y="393">ОП-02: РУБЕЖ</text>
             </g>
 
-            <!-- 2. Город: Голгота -->
             <g class="astro-pin" id="apin-2" onclick="selectAstroNode(2)">
-              <circle class="pin-outer" cx="444" cy="494" r="15"/>
-              <circle class="pin-inner" cx="444" cy="494" r="5"/>
+              <circle class="pin-outer" cx="444" cy="494" r="15"/><circle class="pin-inner" cx="444" cy="494" r="5"/>
             </g>
-
-            <!-- 3. Город: Астерион -->
             <g class="astro-pin" id="apin-3" onclick="selectAstroNode(3)">
-              <circle class="pin-outer" cx="835" cy="485" r="15"/>
-              <circle class="pin-inner" cx="835" cy="485" r="5"/>
+              <circle class="pin-outer" cx="835" cy="485" r="15"/><circle class="pin-inner" cx="835" cy="485" r="5"/>
             </g>
-
-            <!-- 4. Город: Этерна -->
             <g class="astro-pin" id="apin-4" onclick="selectAstroNode(4)">
-              <circle class="pin-outer" cx="224" cy="726" r="15"/>
-              <circle class="pin-inner" cx="224" cy="726" r="5"/>
+              <circle class="pin-outer" cx="224" cy="726" r="15"/><circle class="pin-inner" cx="224" cy="726" r="5"/>
             </g>
-
-            <!-- 5. Биом: Доллина Святых -->
             <g class="astro-pin" id="apin-5" onclick="selectAstroNode(5)">
-              <circle class="pin-outer" cx="475" cy="385" r="13"/>
-              <circle class="pin-inner" cx="475" cy="385" r="4"/>
+              <circle class="pin-outer" cx="475" cy="385" r="13"/><circle class="pin-inner" cx="475" cy="385" r="4"/>
             </g>
-
-            <!-- 6. Биом: Цидатель мучеников -->
             <g class="astro-pin" id="apin-6" onclick="selectAstroNode(6)">
-              <circle class="pin-outer" cx="765" cy="375" r="13"/>
-              <circle class="pin-inner" cx="765" cy="375" r="4"/>
+              <circle class="pin-outer" cx="765" cy="375" r="13"/><circle class="pin-inner" cx="765" cy="375" r="4"/>
             </g>
-
-            <!-- 7. Биом: Безмолвные Земли -->
             <g class="astro-pin" id="apin-7" onclick="selectAstroNode(7)">
-              <circle class="pin-outer" cx="225" cy="575" r="13"/>
-              <circle class="pin-inner" cx="225" cy="575" r="4"/>
+              <circle class="pin-outer" cx="225" cy="575" r="13"/><circle class="pin-inner" cx="225" cy="575" r="4"/>
             </g>
-
-            <!-- 8. Биом: Пепельные Пределы -->
             <g class="astro-pin" id="apin-8" onclick="selectAstroNode(8)">
-              <circle class="pin-outer" cx="675" cy="740" r="13"/>
-              <circle class="pin-inner" cx="675" cy="740" r="4"/>
+              <circle class="pin-outer" cx="675" cy="740" r="13"/><circle class="pin-inner" cx="675" cy="740" r="4"/>
             </g>
-
-            <!-- 9. Ударный Крейсер на орбите -->
             <g class="astro-pin" id="apin-9" onclick="selectAstroNode(9)">
-              <circle class="pin-outer" cx="103" cy="91" r="16"/>
-              <circle class="pin-inner" cx="103" cy="91" r="5"/>
+              <circle class="pin-outer" cx="103" cy="91" r="16"/><circle class="pin-inner" cx="103" cy="91" r="5"/>
             </g>
           </g>
         </svg>
       </div>
 
-      <!-- Правая часть: Тактический Инспектор Сектора (без менеджмента процентов) -->
+      <!-- Правая часть: Тактический Инспектор Сектора -->
       <div class="astro-hud-panel">
         <div class="ah-eyebrow">
           <span id="ah-code">ОПЕРАТИВНАЯ ТОЧКА // ОП-01</span>
@@ -4305,11 +4476,11 @@
 
         <div class="ah-specs">
           <div>
-            <span class="ah-spec-k">КЛАССИФИКАЦИЯ ОБЪЕКТА</span>
+            <span class="ah-spec-k" id="ah-spec-k1">КЛАССИФИКАЦИЯ ОБЪЕКТА</span>
             <span class="ah-spec-v" id="ah-type">Узел ПВО / Макро-орудие</span>
           </div>
           <div>
-            <span class="ah-spec-k">БАЛЛИСТИЧЕСКАЯ СРЕДА</span>
+            <span class="ah-spec-k" id="ah-spec-k2">БАЛЛИСТИЧЕСКАЯ СРЕДА</span>
             <span class="ah-spec-v" id="ah-ballistics">Горный рельеф // До 2 100 м</span>
           </div>
         </div>
@@ -4318,10 +4489,139 @@
 
         <button class="ah-jump-btn" id="ah-jump-btn" onclick="">[ ↗ ОТКРЫТЬ РАПОРТ ОПЕРАЦИИ В ЛИЧНЫХ ЛОГАХ ]</button>
 
-        <div class="ah-quick-title">БЫСТРОЕ НАВЕДЕНИЕ АУСПЕКСА ПО УЗЛАМ:</div>
+        <div class="ah-quick-title" id="ah-quick-title">БЫСТРОЕ НАВЕДЕНИЕ АУСПЕКСА ПО УЗЛАМ:</div>
         <div class="ah-quick-grid" id="ah-quick-grid"></div>
       </div>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var SYS_IMG_RU = 'https://dl.dropboxusercontent.com/scl/fi/8x43v26x508g64uboaupf/SystemRUS.jpg?rlkey=0jrfx6anpc60k0vqix6xo6y4u&st=3w8cwhg0';
+        var SYS_IMG_EN = 'https://dl.dropboxusercontent.com/scl/fi/ig6lmwphty3o21v0mbzjv/SystemENG.jpg?rlkey=j35xqfj9xehue6e70scp0huhy&st=j0zloe9z';
+        window._astroInPlanet = false;
+
+        var SYS_BODIES_INFO = {
+          ru: [
+            ['КАЛЛИДИС ЛЮМЕН // ЦЕНТРАЛЬНОЕ СВЕТИЛО', 'Звезда спектрального класса K. Навигационный ориентир флота Караула Смерти при выходе из Варпа.'],
+            ['МОРТАЛИС-16 // ДОСТУП ЗАКРЫТ', 'Океанический мир внешней орбиты. Высадка Истребительной Группы не санкционирована.'],
+            ['ВЕРРОН-ПРАЙМ // ДОСТУП ЗАКРЫТ', 'Приливной спутник-бастион. Орбитальная телеметрия заблокирована шифром Ордо Ксенос.'],
+            ['ФЛОРИС-4 // ЦЕЛЬ СЛЕДУЮЩЕЙ ФАЗЫ (ДАННЫЕ «ЭНИГМЫ»)', 'Координаты приоритетной цели на Флорис-4 выгружены из бункера «Энигма» (Рапорт ОП-02). Ожидается завершение эвакуации с Каэлис-9.'],
+            ['ГЕГЕМОН // ДОСТУП ЗАКРЫТ', 'Газовый гигант. Добывающие станции на низкой орбите законсервированы.'],
+            ['СОЛУС-7 // ДОСТУП ЗАКРЫТ', 'Пустынный рудный мир. Активных боевых задач для субъекта-884 не зарегистрировано.'],
+            ['КРЕДИОН // ДОСТУП ЗАКРЫТ', 'Безжизненный планетоид внешнего пояса. Сигнатуры ксеносов не пеленгуются.'],
+            ['МАРКЕСС-8 // ДОСТУП ЗАКРЫТ', 'Вулканический мир смерти. Тактический гололит поверхности не загружен в память когитатора.']
+          ],
+          en: [
+            ['CALLIDIS LUMEN // SYSTEM STAR', 'K-class primary star. Navigational beacon for the Deathwatch Strike Cruiser upon Warp translation.'],
+            ['MORTALIS-16 // ACCESS LOCKED', 'Outer-orbit ocean world. Kill-Team deployment not currently sanctioned.'],
+            ['VERRON-PRIME // ACCESS LOCKED', 'Tidal bastion moon. Orbital telemetry locked under Ordo Xenos cipher.'],
+            ['FLORIS-4 // NEXT PHASE TARGET ("ENIGMA" DATA)', 'Priority target coordinates on Floris-4 extracted from Complex "Enigma" (Report OP-02). Awaiting extraction from Caelis-9.'],
+            ['HEGEMON // ACCESS LOCKED', 'Gas giant. Low-orbit extraction platforms mothballed.'],
+            ['SOLUS-7 // ACCESS LOCKED', 'Arid mining world. No active combat directives registered for Subject-884.'],
+            ['KREDION // ACCESS LOCKED', 'Barren outer-belt planetoid. No xenos signatures detected.'],
+            ['MARKESS-8 // ACCESS LOCKED', 'Volcanic death world. Surface tactical hololith not loaded in cogitator memory.']
+          ]
+        };
+
+        window.previewSystemBody = function(idx) {
+          var isEn = (window._currentLang === 'en');
+          var item = (isEn ? SYS_BODIES_INFO.en : SYS_BODIES_INFO.ru)[idx];
+          if (!item) return;
+          document.getElementById('shf-title').textContent = item[0];
+          document.getElementById('shf-sub').textContent   = item[1];
+        };
+
+        window.openAstroPlanet = function(planetKey) {
+          window._astroInPlanet = true;
+          var isEn = (window._currentLang === 'en');
+          document.getElementById('astro-system-hub').style.display = 'none';
+          document.getElementById('astro-caelis-view').style.display = 'grid';
+          document.getElementById('astro-hub-bar-left').style.display = 'none';
+          document.getElementById('astro-planet-bar-left').style.display = 'flex';
+
+          document.getElementById('astro-pg-eyebrow').textContent = isEn
+            ? 'NAVIGATION COGITATOR // DEATHWATCH STRIKE CRUISER // ORBITAL PROJECTION'
+            : 'НАВИГАЦИОННЫЙ КОГИТАТОР // УДАРНЫЙ КРЕЙСЕР КАРАУЛА СМЕРТИ // ОРБИТАЛЬНАЯ ПРОЕКЦИЯ';
+          document.getElementById('astro-pg-main-title').textContent = isEn
+            ? 'Astrography: World Caelis-9'
+            : 'Астрография: Мир Каэлис-9';
+          document.getElementById('astro-pg-badge').textContent = isEn
+            ? '◈ THEATER STATUS: XENOS EXPANSION ZONE (T\'AU)'
+            : '◈ СТАТУС ТВД: ЗОНА КСЕНО-ЭКСПАНСИИ (ТАУ)';
+        };
+
+        window.closeAstroPlanet = function() {
+          window._astroInPlanet = false;
+          var isEn = (window._currentLang === 'en');
+          document.getElementById('astro-caelis-view').style.display = 'none';
+          document.getElementById('astro-system-hub').style.display = 'flex';
+          document.getElementById('astro-planet-bar-left').style.display = 'none';
+          document.getElementById('astro-hub-bar-left').style.display = 'flex';
+
+          document.getElementById('astro-pg-eyebrow').textContent = isEn
+            ? 'NAVIGATION COGITATOR // DEATHWATCH STRIKE CRUISER // SECTOR MAP'
+            : 'НАВИГАЦИОННЫЙ КОГИТАТОР // УДАРНЫЙ КРЕЙСЕР КАРАУЛА СМЕРТИ // КАРТА СИСТЕМЫ';
+          document.getElementById('astro-pg-main-title').textContent = isEn
+            ? 'Callidis Lumen System'
+            : 'Система Каллидис Люмен';
+          document.getElementById('astro-pg-badge').textContent = isEn
+            ? '◈ ACTIVE THEATER: CAELIS-9'
+            : '◈ АКТИВНЫЙ ТВД: КАЭЛИС-9';
+
+          document.getElementById('shf-title').textContent = isEn
+            ? 'CAELIS-9 // ACTIVE COMBAT THEATER'
+            : 'КАЭЛИС-9 // АКТИВНАЯ ЗОНА БОЕВЫХ ДЕЙСТВИЙ';
+          document.getElementById('shf-sub').textContent = isEn
+            ? 'Click planet Caelis-9 on the sector map to deploy the orbital hololith and Kill-Team tactical briefings.'
+            : 'Нажмите на планету Каэлис-9 на карте сектора для развёртки орбитального гололита и тактических сводок Истребительной Группы.';
+        };
+
+        /* Интеграция с переключателем языка RU / EN */
+        var prevApplyLang = window.applySiteLanguage;
+        if (prevApplyLang) {
+          window.applySiteLanguage = function(lang) {
+            prevApplyLang(lang);
+            var isEn = (lang === 'en');
+            var hubImg = document.getElementById('sys-hub-img');
+            if (hubImg) hubImg.src = isEn ? SYS_IMG_EN : SYS_IMG_RU;
+
+            document.getElementById('astro-open-caelis-btn').textContent = isEn
+              ? '[ ◈ OPEN THEATER: CAELIS-9 ]'
+              : '[ ◈ ОТКРЫТЬ ТВД: КАЭЛИС-9 ]';
+            document.getElementById('astro-back-hub-btn').textContent = isEn
+              ? '[ ◄ SYSTEM MAP ]'
+              : '[ ◄ КАРТА СИСТЕМЫ ]';
+            document.getElementById('alayer-btn-0').textContent = isEn
+              ? '[ 01. THEATER OVERVIEW & OPS ]'
+              : '[ 01. ОБЗОР ТВД И ОПЕРАЦИИ ]';
+            document.getElementById('alayer-btn-1').textContent = isEn
+              ? '[ 02. XENOS SIGNATURES (T\'AU) ]'
+              : '[ 02. ПЕЛЕНГ КСЕНОСОВ (ТАУ) ]';
+            document.getElementById('alayer-btn-2').textContent = isEn
+              ? '[ 03. IMPERIAL DEFENSE LINES ]'
+              : '[ 03. РУБЕЖИ ИМПЕРИУМА ]';
+
+            document.getElementById('sys-caelis-tag').textContent = isEn
+              ? '[ ◈ OPEN THEATER ]'
+              : '[ ◈ ОТКРЫТЬ ТВД ]';
+            document.getElementById('shf-enter-btn').textContent = isEn
+              ? '[ ↗ DEPLOY CAELIS-9 DOSSIER ]'
+              : '[ ↗ РАЗВЕРНУТЬ ДОСЬЕ КАЭЛИС-9 ]';
+
+            var isFs = document.getElementById('tab-astro').classList.contains('holo-fullscreen');
+            document.getElementById('astro-fs-btn').textContent = isEn
+              ? (isFs ? '[ ✕ EXIT FULLSCREEN ]' : '[ ⛶ FULLSCREEN HOLOLITH ]')
+              : (isFs ? '[ ✕ СВЕРНУТЬ ГОЛОЛИТ ]' : '[ ⛶ ГОЛОЛИТ НА ВЕСЬ ЭКРАН ]');
+
+            if (window._astroInPlanet) {
+              window.openAstroPlanet('caelis');
+            } else {
+              window.closeAstroPlanet();
+            }
+          };
+        }
+      });
+    </script>
   </section>
 
   <!-- ════════════════════════════════════════════
