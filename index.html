@@ -3196,7 +3196,7 @@
                     <div class="tl-desc">Отказ от цепного и штурмового оружия. Перевод в Элиминаторы (броня Мк X «Фобос») и отправка в Караул Смерти.</div>
                   </div>
                   <div class="tl-item">
-                    <div class="tl-date">ТЕКУЩИЙ СТАТУС // КАЭЛИС-9</div>
+                    <div class="tl-date" id="tl-current-status-date">ТЕКУЩИЙ СТАТУС</div>
                     <div class="tl-title">Оперативный Марксман Звена</div>
                     <div class="tl-desc">Дальнее огневое прикрытие Истребительной Группы, РЭБ-подавление и жёсткий надзор за дисциплиной братьев.</div>
                   </div>
@@ -4474,15 +4474,7 @@
               <line x1="312" y1="380" x2="296" y2="396" stroke="#ff3020" stroke-width="3.5"/>
               <text class="pin-tag" x="175" y="393">ОП-02: РУБЕЖ</text>
             </g>
-            
-            <!-- 10. ОП-03: Точка эвакуации (Конец маршрута) -->
-            <g class="astro-pin pin-mission" id="apin-10" onclick="selectAstroNode(10)">
-              <circle class="pin-pulse-ring" cx="278" cy="468" r="18"/>
-              <circle class="pin-outer" cx="278" cy="468" r="14"/>
-              <polygon points="278,458 286,468 278,478 270,468" fill="#5cd65c"/>
-              <text class="pin-tag" x="108" y="473" id="apin-10-tag">ОП-03: ЭВАКУАЦИЯ</text>
-            </g>
-            
+
             <g class="astro-pin" id="apin-2" onclick="selectAstroNode(2)">
               <circle class="pin-outer" cx="444" cy="494" r="15"/><circle class="pin-inner" cx="444" cy="494" r="5"/>
             </g>
@@ -4506,6 +4498,14 @@
             </g>
             <g class="astro-pin" id="apin-9" onclick="selectAstroNode(9)">
               <circle class="pin-outer" cx="103" cy="91" r="16"/><circle class="pin-inner" cx="103" cy="91" r="5"/>
+            </g>
+
+            <!-- 10. ОП-03: Точка эвакуации (строго 11-й элемент, индекс 10) -->
+            <g class="astro-pin pin-mission" id="apin-10" onclick="selectAstroNode(10)">
+              <circle class="pin-pulse-ring" cx="278" cy="468" r="18"/>
+              <circle class="pin-outer" cx="278" cy="468" r="14"/>
+              <polygon points="278,458 286,468 278,478 270,468" fill="#5cd65c"/>
+              <text class="pin-tag" x="108" y="473" id="apin-10-tag">ОП-03: ЭВАКУАЦИЯ</text>
             </g>
           </g>
         </svg>
@@ -4540,10 +4540,11 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('load', function() {
         var SYS_IMG_RU = 'https://dl.dropboxusercontent.com/scl/fi/8x43v26x508g64uboaupf/SystemRUS.jpg?rlkey=0jrfx6anpc60k0vqix6xo6y4u&st=3w8cwhg0';
         var SYS_IMG_EN = 'https://dl.dropboxusercontent.com/scl/fi/ig6lmwphty3o21v0mbzjv/SystemENG.jpg?rlkey=j35xqfj9xehue6e70scp0huhy&st=j0zloe9z';
         window._astroInPlanet = false;
+        window._selectedAstroIdx = 0;
 
         var OP3_NODE_RU = {
           code: 'ТОЧКА ЭВАКУАЦИИ // ОП-03',
@@ -4556,6 +4557,7 @@
           missionId: 'mission-3',
           missionBtnText: '[ ↗ ОТКРЫТЬ РАПОРТ ОП-03 В ЛИЧНЫХ ЛОГАХ ]'
         };
+
         var OP3_NODE_EN = {
           code: 'EXTRACTION POINT // OP-03',
           coords: 'GRID: 27.8°N // 46.8°E',
@@ -4568,11 +4570,6 @@
           missionBtnText: '[ ↗ OPEN REPORT OP-03 IN PERSONAL LOGS ]'
         };
 
-        if (window.ASTRO_NODES && window.ASTRO_NODES.length === 10) {
-          window.ASTRO_NODES.push(OP3_NODE_RU);
-          if (window.initAstroMap) window.initAstroMap();
-        }
-        
         var SYS_BODIES_INFO = {
           ru: [
             ['КАЛЛИДИС ЛЮМЕН // ЦЕНТРАЛЬНОЕ СВЕТИЛО', 'Звезда спектрального класса K. Навигационный ориентир флота Караула Смерти при выходе из Варпа.'],
@@ -4595,6 +4592,140 @@
             ['MARKESS-8 // ACCESS LOCKED', 'Volcanic death world. Surface tactical hololith not loaded in cogitator memory.']
           ]
         };
+
+        /* Синхронизация узла ОП-03 (индекс 10) с массивом ASTRO_NODES и сеткой быстрого наведения */
+        function syncOp3Node() {
+          var isEn = (window._currentLang === 'en');
+          var nodeData = isEn ? OP3_NODE_EN : OP3_NODE_RU;
+
+          if (typeof ASTRO_NODES !== 'undefined' && Array.isArray(ASTRO_NODES)) {
+            ASTRO_NODES[10] = nodeData;
+          }
+          if (window.ASTRO_NODES && Array.isArray(window.ASTRO_NODES)) {
+            window.ASTRO_NODES[10] = nodeData;
+          }
+
+          var qGrid = document.getElementById('ah-quick-grid');
+          if (!qGrid) return;
+
+          var btn10 = document.getElementById('ah-qbtn-10') || qGrid.children[10];
+          if (!btn10) {
+            btn10 = document.createElement('button');
+            btn10.className = 'ah-qbtn';
+            btn10.id = 'ah-qbtn-10';
+            btn10.setAttribute('onclick', 'selectAstroNode(10)');
+            qGrid.appendChild(btn10);
+          }
+          btn10.textContent = nodeData.shortName;
+          btn10.classList.toggle('active', window._selectedAstroIdx === 10);
+        }
+
+        /* Перехват selectAstroNode для безупречной работы точки 10 */
+        var origSelectAstroNode = window.selectAstroNode;
+        window.selectAstroNode = function(idx) {
+          window._selectedAstroIdx = idx;
+          syncOp3Node();
+
+          if (idx === 10) {
+            var isEn = (window._currentLang === 'en');
+            var n = isEn ? OP3_NODE_EN : OP3_NODE_RU;
+
+            document.getElementById('ah-code').textContent       = n.code;
+            document.getElementById('ah-coords').textContent     = n.coords;
+            document.getElementById('ah-title').textContent      = n.title;
+            document.getElementById('ah-type').textContent       = n.type;
+            document.getElementById('ah-ballistics').textContent = n.ballistics;
+            document.getElementById('ah-desc').textContent       = n.desc;
+
+            var jumpBtn = document.getElementById('ah-jump-btn');
+            if (jumpBtn) {
+              jumpBtn.style.display = 'block';
+              jumpBtn.textContent = n.missionBtnText;
+              jumpBtn.onclick = function() {
+                var astroTab = document.getElementById('tab-astro');
+                if (astroTab && astroTab.classList.contains('holo-fullscreen') && window.toggleAstroFullscreen) {
+                  window.toggleAstroFullscreen();
+                }
+                var navLogs = document.querySelector('.nav-item[onclick*="tab-logs"]');
+                if (navLogs && window.switchTab) window.switchTab('tab-logs', navLogs);
+                var mEl = document.getElementById('mission-3');
+                if (mEl) {
+                  mEl.classList.add('open');
+                  setTimeout(function() { mEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 120);
+                }
+              };
+            }
+
+            document.querySelectorAll('#astro-layer-main .astro-pin').forEach(function(pin) {
+              pin.classList.toggle('active', pin.id === 'apin-10');
+            });
+            document.querySelectorAll('#ah-quick-grid .ah-qbtn').forEach(function(btn, i) {
+              btn.classList.toggle('active', i === 10 || btn.id === 'ah-qbtn-10');
+            });
+          } else {
+            if (origSelectAstroNode) origSelectAstroNode(idx);
+            var pin10 = document.getElementById('apin-10');
+            if (pin10) pin10.classList.remove('active');
+            var btn10 = document.getElementById('ah-qbtn-10');
+            if (btn10) btn10.classList.remove('active');
+          }
+        };
+
+        /* Перехват initAstroMap, чтобы кнопка ОП-03 никогда не затиралась при перерисовке сетки */
+        var origInitAstroMap = window.initAstroMap;
+        if (origInitAstroMap) {
+          window.initAstroMap = function() {
+            syncOp3Node();
+            origInitAstroMap();
+            syncOp3Node();
+          };
+        }
+
+        /* Перевод Рапорта 03 и фиксация ТЕКУЩЕГО СТАТУСА в Досье */
+        function applyMission3AndDossierFixes(isEn) {
+          /* 1. Фикс подписи ТЕКУЩИЙ СТАТУС в Досье (без КАЭЛИС-9) */
+          var tlDates = document.querySelectorAll('#tab-dossier .tl-date');
+          var statusDateEl = document.getElementById('tl-current-status-date') || tlDates[4];
+          if (statusDateEl) {
+            statusDateEl.textContent = isEn ? 'CURRENT STATUS' : 'ТЕКУЩИЙ СТАТУС';
+          }
+
+          /* 2. Подпись пина ОП-03 на карте */
+          var ap10 = document.getElementById('apin-10-tag');
+          if (ap10) ap10.textContent = isEn ? 'OP-03: EXTRACTION' : 'ОП-03: ЭВАКУАЦИЯ';
+
+          /* 3. Перевод Рапорта 03 в Личных Логах */
+          var m3El = document.getElementById('m3-code');
+          if (m3El) {
+            document.getElementById('m3-code').textContent   = isEn ? 'REPORT // OP-03' : 'РАПОРТ // ОП-03';
+            document.getElementById('m3-title').textContent  = isEn ? 'Ash Frontier: Relic Defense & Extraction from Caelis-9' : 'Пепельный Рубеж: Оборона Реликвий и Эвакуация с Каэлис-9';
+            document.getElementById('m3-dist').textContent   = isEn ? 'ROLE: LZ DEFENSE / TARGETING' : 'РОЛЬ: ОБОРОНА ПЛАЦДАРМА / НАВЕДЕНИЕ';
+            document.getElementById('m3-status').textContent = isEn ? 'EXTRACTION COMPLETE (ORBITAL STRIKE)' : 'ЭВАКУАЦИЯ ЗАВЕРШЕНА (ОРБИТАЛЬНЫЙ УДАР)';
+            document.getElementById('m3-tk1').textContent    = isEn ? 'TACTICAL OBJECTIVE' : 'ТАКТИЧЕСКАЯ ЗАДАЧА';
+            document.getElementById('m3-tv1').textContent    = isEn ? 'FOG BREAKTHROUGH // LZ DEFENSE' : 'ПРОРЫВ В ТУМАНЕ // ОБОРОНА ТЭ';
+            document.getElementById('m3-tk2').textContent    = isEn ? 'ENGAGEMENT RANGE' : 'РАБОЧАЯ ДИСТАНЦИЯ';
+            document.getElementById('m3-tv2').textContent    = isEn ? 'MEDIUM / LONG (ANOMALOUS STORM)' : 'СРЕДНЯЯ / ДАЛЬНЯЯ (АНОМАЛЬНЫЙ ШТОРМ)';
+            document.getElementById('m3-tk3').textContent    = isEn ? 'PRIORITY TARGETS' : 'ПРИОРИТЕТНЫЕ ЦЕЛИ';
+            document.getElementById('m3-tv3').textContent    = isEn ? 'GUE\'VESA TRAITORS / KX139 NODES' : 'ПОЛКИ ГУЭ\'ВЕСА / УЗЛЫ НАВЕДЕНИЯ KX139';
+            document.getElementById('m3-tk4').textContent    = isEn ? 'COMBAT PULSE' : 'ПУЛЬС В КОНТАКТЕ';
+            document.getElementById('m3-tv4').textContent    = isEn ? '45–51 BPM (STABLE)' : '45–51 УД/МИН (СТАБИЛЬНО)';
+            document.getElementById('m3-p1').innerHTML       = isEn
+              ? '<strong>Operation Progress:</strong> Emerging from the engineering conduits of Complex "Enigma", the Kill-Team entered a scorched plain strewn with charred timber and the low ruins of an ancient monastic sanctuary. While regrouping at an isolated Astra Militarum strongpoint, we repelled a counter-assault by Gue\'vesa auxiliary regiments—human turncoats serving the T\'au, whose elimination I prioritized through the scope. According to the garrison Lieutenant, the outnumbered Guardsmen were holding the encircled ruins to safeguard surviving sacred relics: six fragments of ancient Scriptures and four historical chronicles. The garrison was ordered to hold until we cleared the extraction landing zone, then advance to link up.'
+              : '<strong>Ход операции:</strong> Выход из инженерных коллекторов комплекса «Энигма» вывел группу на выжженную равнину, усеянную обугленными стволами деревьев и низкими руинами древнего храмово-монастырского подворья. При перегруппировке на изолином опорном пункте Астра Милитарум был отражён встречный штурм формирований Гуэ\'веса — людей-перебежчиков на службе Тау, чья ликвидация производилась мной в приоритетном порядке. Из доклада лейтенанта гарнизона установлено: сводный отряд Гвардии в полном окружении удерживал руины монастыря ради спасения уцелевших священных реликвий — шести фрагментов древних Писаний и четырёх исторических летописей. Гарнизону был передан приказ удерживать позицию до зачистки нами посадочного плацдарма, после чего выдвигаться на соединение.';
+            document.getElementById('m3-p2').innerHTML       = isEn
+              ? 'The multi-hour breakthrough to the extraction zone crossed open plains shrouded in dense anomalous fog and atmospheric tempests that severely degraded visual optics. After breaching the xenos cordons and fortifying the landing zone, we received the arriving Guardsmen bearing the relics and established an all-round perimeter. Realizing their final opportunity to destroy us, T\'au command committed all remaining sector reserves in a semi-circular encirclement supported by a second KX139 "Ta\'unar" supremacy artillery platform. The anomalous weather disrupted even xenos sensor suites, allowing us to hold the perimeter through an hour of unbroken combat.'
+              : 'Многочасовой прорыв к точке эвакуации проходил через открытую равнину в условиях плотного аномального тумана и атмосферного шторма, предельно затруднявших визуальный контакт. Пробив кордоны ксеносов и закрепившись в зоне посадки, мы приняли подошедших гвардейцев с реликвиями и организовали круговую оборону. Осознавая неизбежность нашей эвакуации, командование Тау бросило в полукольцо все оставшиеся в секторе резервы при поддержке второй сверхтяжёлой артиллерийской платформы класса KX139 «Тау\'нар». Аномальная непогода вызывала сбои даже в сенсорных решетках ксеносов, что позволило удерживать периметр на протяжении часа непрерывного боя.';
+            document.getElementById('m3-p3').innerHTML       = isEn
+              ? 'At the climax of the assault, Librarian Callidus—who had maintained a kinetic psychic dome over our positions—reached the threshold of an Immaterium breach. Detecting the whispers of the Abyss and the risk of a localized Warp rift, the psyker charged alone into the T\'au lines to turn any potential detonation against the enemy. Defying a hail of fire from thousands of pulse barrels, Brother Callidus not only survived, but suppressed the Warp echo through sheer willpower, returning to the line to fight exclusively with conventional firearms while abstaining from further psychic manifestations. At the exact second the KX139 platform completed charging its main array to bury the landing zone under gravel, Imperial Navy warships and the Deathwatch Strike Cruiser translated into low orbit. A pinpoint orbital lance strike annihilated the xenos titan, securing our boarding of the extraction shuttles and departure from Caelis-9.'
+              : 'В критическую фазу штурма библиарий Каллидус, длительное время удерживавший защитный психо-купол над позициями, оказался на грани ментального прорыва Имматериума. Зафиксировав пробуждение голосов Бездны и риск локального разрыва реальности, псайкер в одиночку устремился в порядки Тау, чтобы в случае катастрофы обратить варп-всплеск на врага. Вопреки шквальному огню из тысяч импульсных стволов, брат Каллидус не только уцелел, но и сумел подавить наваждение чистой волей, вернувшись в строй и продолжив вести огонь исключительно из штатного оружия, полностью отказавшись от психосил. В секунду, когда платформа KX139 завершила зарядку главного калибра для погребения плацдарма под слоем щебня, на низкой орбите вышли из Варпа корабли Имперского Флота и баржа Караула Смерти. Прямой орбитальный залп аннигилировал титана ксеносов, обеспечив погрузку в десантные челноки и успешную эвакуацию с Каэлис-9.';
+            document.getElementById('m3-cv-head').textContent = isEn
+              ? '✦ SANGUIS CENSOR VERDICT // DEPLOYMENT ASSESSMENT'
+              : '✦ ВЕРДИКТ САНГВИС ЦЕНЗОРА // ОЦЕНКА БОЕВОГО ВЫХОДА';
+            document.getElementById('m3-cv-text').textContent = isEn
+              ? '“Mortal Guardsmen bled in the mud of a razed monastery for six scraps of Scripture and four ancient chronicles. The irony did not escape my cogitator: five parchments rest upon the shroud of my own rifle, keeping me from falling into the abyss. As for Librarian Callidus—his lone charge into thousands of barrels on the verge of possession was a severe breach of tactical formation, yet the outcome commands respect. Renouncing unstable sorcery in favor of cold steel and the pull of a bolter trigger restored his sanity. The orbital strike placed a mathematically flawless period upon the Caelis-9 campaign. We leave this ash-choked world behind. Next crosshairs vector—Floris-4.”'
+              : '«Смертные гвардейцы умирали в грязи разрушенного монастыря ради шести обрывков Писаний и четырёх старых летописей. Ирония зафиксирована моим когитатором: на кожухе моей собственной винтовки покоятся пять пергаментов, удерживающих меня от падения во тьму. Что касается библиария Каллидуса — его одиночный рывок под тысячи стволов на грани одержимости был грубым нарушением тактического строя, но итог достоин уважения. Отказ от нестабильного колдовства в пользу холодной стали и спуска болтера вернул ему рассудок. Орбитальный удар поставил математически безупречную точку в операции на Каэлис-9. Мы покидаем этот выжженный мир. Следующий вектор прицела — Флорис-4».';
+          }
+        }
 
         window.previewSystemBody = function(idx) {
           var isEn = (window._currentLang === 'en');
@@ -4621,6 +4752,8 @@
           document.getElementById('astro-pg-badge').textContent = isEn
             ? '◈ THEATER STATUS: XENOS EXPANSION ZONE (T\'AU)'
             : '◈ СТАТУС ТВД: ЗОНА КСЕНО-ЭКСПАНСИИ (ТАУ)';
+
+          syncOp3Node();
         };
 
         window.closeAstroPlanet = function() {
@@ -4649,7 +4782,11 @@
             : 'Нажмите на планету Каэлис-9 на карте сектора для развёртки орбитального гололита и тактических сводок Истребительной Группы.';
         };
 
-        /* Интеграция с переключателем языка RU / EN */
+        /* Первичная инициализация точки ОП-03 при загрузке */
+        syncOp3Node();
+        applyMission3AndDossierFixes(window._currentLang === 'en');
+
+        /* Интеграция с переключателем языка RU / EN (выполняется ВСЕГДА, независимо от открытого экрана) */
         var prevApplyLang = window.applySiteLanguage;
         if (prevApplyLang) {
           window.applySiteLanguage = function(lang) {
@@ -4686,47 +4823,17 @@
               ? (isFs ? '[ ✕ EXIT FULLSCREEN ]' : '[ ⛶ FULLSCREEN HOLOLITH ]')
               : (isFs ? '[ ✕ СВЕРНУТЬ ГОЛОЛИТ ]' : '[ ⛶ ГОЛОЛИТ НА ВЕСЬ ЭКРАН ]');
 
+            /* Синхронизируем ОП-03, Рапорт 03 и Досье при любом состоянии карты */
+            syncOp3Node();
+            applyMission3AndDossierFixes(isEn);
+            if (window._selectedAstroIdx === 10) {
+              window.selectAstroNode(10);
+            }
+
             if (window._astroInPlanet) {
               window.openAstroPlanet('caelis');
             } else {
               window.closeAstroPlanet();
-              if (window.ASTRO_NODES) {
-              window.ASTRO_NODES[10] = isEn ? OP3_NODE_EN : OP3_NODE_RU;
-              if (window.initAstroMap) window.initAstroMap();
-            }
-            var ap10 = document.getElementById('apin-10-tag');
-            if (ap10) ap10.textContent = isEn ? 'OP-03: EXTRACTION' : 'ОП-03: ЭВАКУАЦИЯ';
-
-            var m3El = document.getElementById('m3-code');
-            if (m3El) {
-              document.getElementById('m3-code').textContent   = isEn ? 'REPORT // OP-03' : 'РАПОРТ // ОП-03';
-              document.getElementById('m3-title').textContent  = isEn ? 'Ash Frontier: Relic Defense & Extraction from Caelis-9' : 'Пепельный Рубеж: Оборона Реликвий и Эвакуация с Каэлис-9';
-              document.getElementById('m3-dist').textContent   = isEn ? 'ROLE: LZ DEFENSE / TARGETING' : 'РОЛЬ: ОБОРОНА ПЛАЦДАРМА / НАВЕДЕНИЕ';
-              document.getElementById('m3-status').textContent = isEn ? 'EXTRACTION COMPLETE (ORBITAL STRIKE)' : 'ЭВАКУАЦИЯ ЗАВЕРШЕНА (ОРБИТАЛЬНЫЙ УДАР)';
-              document.getElementById('m3-tk1').textContent    = isEn ? 'TACTICAL OBJECTIVE' : 'ТАКТИЧЕСКАЯ ЗАДАЧА';
-              document.getElementById('m3-tv1').textContent    = isEn ? 'FOG BREAKTHROUGH // LZ DEFENSE' : 'ПРОРЫВ В ТУМАНЕ // ОБОРОНА ТЭ';
-              document.getElementById('m3-tk2').textContent    = isEn ? 'ENGAGEMENT RANGE' : 'РАБОЧАЯ ДИСТАНЦИЯ';
-              document.getElementById('m3-tv2').textContent    = isEn ? 'MEDIUM / LONG (ANOMALOUS STORM)' : 'СРЕДНЯЯ / ДАЛЬНЯЯ (АНОМАЛЬНЫЙ ШТОРМ)';
-              document.getElementById('m3-tk3').textContent    = isEn ? 'PRIORITY TARGETS' : 'ПРИОРИТЕТНЫЕ ЦЕЛИ';
-              document.getElementById('m3-tv3').textContent    = isEn ? 'GUE\'VESA TRAITORS / KX139 NODES' : 'ПОЛКИ ГУЭ\'ВЕСА / УЗЛЫ НАВЕДЕНИЯ KX139';
-              document.getElementById('m3-tk4').textContent    = isEn ? 'COMBAT PULSE' : 'ПУЛЬС В КОНТАКТЕ';
-              document.getElementById('m3-tv4').textContent    = isEn ? '45–51 BPM (STABLE)' : '45–51 УД/МИН (СТАБИЛЬНО)';
-              document.getElementById('m3-p1').innerHTML       = isEn
-                ? '<strong>Operation Progress:</strong> Emerging from the engineering conduits of Complex "Enigma", the Kill-Team entered a scorched plain strewn with charred timber and the low ruins of an ancient monastic sanctuary. While regrouping at an isolated Astra Militarum strongpoint, we repelled a counter-assault by Gue\'vesa auxiliary regiments—human turncoats serving the T\'au, whose elimination I prioritized through the scope. According to the garrison Lieutenant, the outnumbered Guardsmen were holding the encircled ruins to safeguard surviving sacred relics: six fragments of ancient Scriptures and four historical chronicles. The garrison was ordered to hold until we cleared the extraction landing zone, then advance to link up.'
-                : '<strong>Ход операции:</strong> Выход из инженерных коллекторов комплекса «Энигма» вывел группу на выжженную равнину, усеянную обугленными стволами деревьев и низкими руинами древнего храмово-монастырского подворья. При перегруппировке на изолированном опорном пункте Астра Милитарум был отражён встречный штурм формирований Гуэ\'веса — людей-перебежчиков на службе Тау, чья ликвидация производилась мной в приоритетном порядке. Из доклада лейтенанта гарнизона установлено: сводный отряд Гвардии в полном окружении удерживал руины монастыря ради спасения уцелевших священных реликвий — шести фрагментов древних Писаний и четырёх исторических летописей. Гарнизону был передан приказ удерживать позицию до зачистки нами посадочного плацдарма, после чего выдвигаться на соединение.';
-              document.getElementById('m3-p2').innerHTML       = isEn
-                ? 'The multi-hour breakthrough to the extraction zone crossed open plains shrouded in dense anomalous fog and atmospheric tempests that severely degraded visual optics. After breaching the xenos cordons and fortifying the landing zone, we received the arriving Guardsmen bearing the relics and established an all-round perimeter. Realizing their final opportunity to destroy us, T\'au command committed all remaining sector reserves in a semi-circular encirclement supported by a second KX139 "Ta\'unar" supremacy artillery platform. The anomalous weather disrupted even xenos sensor suites, allowing us to hold the perimeter through an hour of unbroken combat.'
-                : 'Многочасовой прорыв к точке эвакуации проходил через открытую равнину в условиях плотного аномального тумана и атмосферного шторма, предельно затруднявших визуальный контакт. Пробив кордоны ксеносов и закрепившись в зоне посадки, мы приняли подошедших гвардейцев с реликвиями и организовали круговую оборону. Осознавая неизбежность нашей эвакуации, командование Тау бросило в полукольцо все оставшиеся в секторе резервы при поддержке второй сверхтяжёлой артиллерийской платформы класса KX139 «Тау\'нар». Аномальная непогода вызывала сбои даже в сенсорных решетках ксеносов, что позволило удерживать периметр на протяжении часа непрерывного боя.';
-              document.getElementById('m3-p3').innerHTML       = isEn
-                ? 'At the climax of the assault, Librarian Callidus—who had maintained a kinetic psychic dome over our positions—reached the threshold of an Immaterium breach. Detecting the whispers of the Abyss and the risk of a localized Warp rift, the psyker charged alone into the T\'au lines to turn any potential detonation against the enemy. Defying a hail of fire from thousands of pulse barrels, Brother Callidus not only survived, but suppressed the Warp echo through sheer willpower, returning to the line to fight exclusively with conventional firearms while abstaining from further psychic manifestations. At the exact second the KX139 platform completed charging its main array to bury the landing zone under gravel, Imperial Navy warships and the Deathwatch Strike Cruiser translated into low orbit. A pinpoint orbital lance strike annihilated the xenos titan, securing our boarding of the extraction shuttles and departure from Caelis-9.'
-                : 'В критическую фазу штурма библиарий Каллидус, длительное время удерживавший защитный психо-купол над позициями, оказался на грани ментального прорыва Имматериума. Зафиксировав пробуждение голосов Бездны и риск локального разрыва реальности, псайкер в одиночку устремился в порядки Тау, чтобы в случае катастрофы обратить варп-всплеск на врага. Вопреки шквальному огню из тысяч импульсных стволов, брат Каллидус не только уцелел, но и сумел подавить наваждение чистой волей, вернувшись в строй и продолжив вести огонь исключительно из штатного оружия, полностью отказавшись от психосил. В секунду, когда платформа KX139 завершила зарядку главного калибра для погребения плацдарма под слоем щебня, на низкой орбите вышли из Варпа корабли Имперского Флота и баржа Караула Смерти. Прямой орбитальный залп аннигилировал титана ксеносов, обеспечив погрузку в десантные челноки и успешную эвакуацию с Каэлис-9.';
-              document.getElementById('m3-cv-head').textContent = isEn
-                ? '✦ SANGUIS CENSOR VERDICT // DEPLOYMENT ASSESSMENT'
-                : '✦ ВЕРДИКТ САНГВИС ЦЕНЗОРА // ОЦЕНКА БОЕВОГО ВЫХОДА';
-              document.getElementById('m3-cv-text').textContent = isEn
-                ? '“Mortal Guardsmen bled in the mud of a razed monastery for six scraps of Scripture and four ancient chronicles. The irony did not escape my cogitator: five parchments rest upon the shroud of my own rifle, keeping me from falling into the abyss. As for Librarian Callidus—his lone charge into thousands of barrels on the verge of possession was a severe breach of tactical formation, yet the outcome commands respect. Renouncing unstable sorcery in favor of cold steel and the pull of a bolter trigger restored his sanity. The orbital strike placed a mathematically flawless period upon the Caelis-9 campaign. We leave this ash-choked world behind. Next crosshairs vector—Floris-4.”'
-                : '«Смертные гвардейцы умирали в грязи разрушенного монастыря ради шести обрывков Писаний и четырёх старых летописей. Ирония зафиксирована моим когитатором: на кожухе моей собственной винтовки покоятся пять пергаментов, удерживающих меня от падения во тьму. Что касается библиария Каллидуса — его одиночный рывок под тысячи стволов на грани одержимости был грубым нарушением тактического строя, но итог достоин уважения. Отказ от нестабильного колдовства в пользу холодной стали и спуска болтера вернул ему рассудок. Орбитальный удар поставил математически безупречную точку в операции на Каэлис-9. Мы покидаем этот выжженный мир. Следующий вектор прицела — Флорис-4».';
-            }
             }
           };
         }
